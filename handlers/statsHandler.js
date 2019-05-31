@@ -57,6 +57,7 @@ stats.getStat = (stat = "") => {
 };
 
 stats.shutdown = (callback) => {
+    logger.info("Saving stats...", MOD);
     fs.writeFile("./stats.json", JSON.stringify(storedStats), (err) => {
         if (err) logger.error(`Failed to update stats file: ${err}`, MOD);
         else callback();

@@ -74,7 +74,7 @@ function skillOfTheWeek(msg, args) {
 
 cml.sotw = (msg, args, chan) => {
     var search = "";
-    if (args) {
+    if (args && msg) {
         if (args.length < 1) {
             var getRSN = memberHandler.get(msg.author.username);
 

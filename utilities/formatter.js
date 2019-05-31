@@ -16,6 +16,8 @@ formatter.convertTime = (time = "", ampm, appendZulu = true) => {
         var hour = parseInt(timeParts[0]);
         hour += 12;
 
+        if (hour === 24) hour -= 12;
+
         timeParts[0] = hour.toString();
     }
 

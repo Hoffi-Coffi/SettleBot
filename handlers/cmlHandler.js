@@ -87,8 +87,7 @@ cml.stageData = (skill, callback) => {
     });
 
     var now = new Date();
-    now.setMinutes(now.getUTCMinutes() + 2);
-    //now.setMinutes(Math.ceil(now.getUTCMinutes() / 30) * 30);
+    now.setMinutes(Math.ceil(now.getUTCMinutes() / 30) * 30);
     var day = now.getUTCDate().toString();
     if (now.getUTCDate() < 10) day = "0" + day;
 

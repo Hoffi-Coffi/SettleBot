@@ -35,7 +35,7 @@ admin.getMuteRole = () => muteRole;
 admin.getAuditChannel = () => auditChannel;
 
 function logout(msg) {
-    logger.info(`Initiating bot shutdown on behalf of ${msg.author.username}...`);
+    logger.info(`Initiating bot shutdown on behalf of ${msg.author.username}...`, MOD);
     
     if (!guard.isDevMode()) serverUtils.messageChannel(auditChannel, `Shutting down by request of ${msg.guild.member(msg.author)} :cry:`);
 

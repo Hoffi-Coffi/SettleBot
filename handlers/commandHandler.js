@@ -42,7 +42,16 @@ command.startup = () => {
 command.setup = (bot) => {
     var server = bot.guilds.first();
 
-    adminService.setup(() => bot.destroy(), 
+    adminService.setup(() => {
+            logger.info("Destroying bot...", MOD);
+            bot.destroy().then(() => {
+                process.exit();
+            })
+            .catch((err) => {
+                logger.error(`Failed to destroy bot: ${err}`);
+                process.exit(1);
+            });
+        }, 
         server.channels.find((channel) => channel.name === 'bot-log'),
         server.roles.find((role) => role.name === "Muted"));
     memberService.setup(server.roles.find((role) => role.name === 'Athlete'));

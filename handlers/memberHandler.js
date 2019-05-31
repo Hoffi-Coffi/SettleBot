@@ -43,6 +43,7 @@ member.get = (user = "") => registeredNames.find(name => name.user === user);
 member.shutdown = (callback) => member.save(callback);
 
 member.save = (callback) => {
+    logger.info("Saving memberlist...", MOD);
     fs.writeFile("./rsns.json", JSON.stringify(registeredNames), (err) => {
         if (err) logger.error(`Failed to update Memberlist file: ${err}`, MOD);
         else if (callback) callback();
