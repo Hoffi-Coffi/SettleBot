@@ -35,6 +35,7 @@ config.setup = (_sotwChannel) => {
     sotwChannel = _sotwChannel;
 
     setupTimeouts();
+    updateTopic();
 
     if (!sotwChannel) logger.warn("Couldn't find SOTW channel.", MOD);
 }
@@ -56,7 +57,7 @@ config.updateSotw = (startDatetime, sotwCompId, msg) => {
                 memberService.getAthleteRole().setMentionable(true).then(() => {
                     sotwChannel.send(`${memberService.getAthleteRole()}, a new Skill Of The Week competition has begun!`)
                         .then(() => {
-                            cmlService.sotw(msg, [], sotwChannel);
+                            cmlService.sotw(null, [], sotwChannel);
                             memberService.getAthleteRole().setMentionable(false);
                         });
                 });
@@ -72,7 +73,9 @@ function updateTopic() {
 
     if (!mappedTopic) mappedTopic = skill;
 
-    sotwChannel.setTopic(`this week we are training ${mappedTopic}`);
+    var topic = `this week we are training ${mappedTopic}`;
+
+    if (sotwChannel.topic !== topic) sotwChannel.setTopic(`this week we are training ${mappedTopic}`);
 }
 
 function setupTimeouts() {
@@ -121,11 +124,11 @@ function setConfig(msg, args) {
             cmlHandler.scrape(() => {
                 updateTopic();
                 setupTimeouts();
-                
+
                 memberService.getAthleteRole().setMentionable(true).then(() => {
                     sotwChannel.send(`${memberService.getAthleteRole()}, a new Skill Of The Week competition has begun!`)
                         .then(() => {
-                            cmlService.sotw(msg, [], sotwChannel);
+                            cmlService.sotw(null, [], sotwChannel);
                             memberService.getAthleteRole().setMentionable(false);
                         });
                 });
