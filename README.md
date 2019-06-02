@@ -19,6 +19,7 @@ Currently, SettleBot provides the following features;
 
 ## Roadmap
 SettleBot is constantly evolving. The next features to add are;
+* Auto-update new player when registered
 * A help command!
 * A stats-lookup command
 * Event tracking and management
