@@ -15,11 +15,11 @@ Currently, SettleBot provides the following features;
     * Pings that role when the competition is over.
     * Easy to set-up a new SOTW from the previous one - all handled by the bot!
 * Allows players to register their RSN with the bot to automatically include their RSN in future commands
+    * Automatically adds registered players to the CML tracker
 * Statistics!
 
 ## Roadmap
 SettleBot is constantly evolving. The next features to add are;
-* Auto-update new player when registered
 * A help command!
 * A stats-lookup command
 * Event tracking and management
