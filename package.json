@@ -2,13 +2,23 @@
     "name": "settle-bot",
     "version": "1.0.0",
     "description": "The Settlement Discord bot",
-    "main": "bot.js",
+    "private": true,
     "author": "Hoffi Coffi",
     "dependencies": {
+        "@types/cheerio": "^0.22.11",
+        "@types/form-data": "^2.2.1",
         "cheerio": "^1.0.0-rc.3",
         "discord.js": "^11.4.2",
         "form-data": "^2.3.3",
         "moment": "^2.24.0",
+        "reflect-metadata": "^0.1.13",
+        "tsyringe": "^3.2.0",
         "winston": "^3.2.1"
+    },
+    "devDependencies": {
+        "awesome-typescript-loader": "^5.2.1",
+        "typescript": "^3.5.1",
+        "webpack": "^4.32.2",
+        "webpack-cli": "^3.3.2"
     }
 }
