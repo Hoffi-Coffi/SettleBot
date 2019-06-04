@@ -33,21 +33,30 @@ function registerMember(msg, args) {
     }
 
     var rsn = args.join("_");
+    var reply = null;
 
     var finalise = () => {
         memberHandler.register(rsn, msg.author.username);
 
         serverUtils.addRoleToUser(msg.guild.member(msg.author), athleteRole);
 
-        msg.reply("I've added you to my memberlist.");
+        cmlHandler.updatePlayer(rsn, () => {
+            reply.delete();
+
+            msg.reply("I've added you to my memberlist.");
+        });
     }
 
-    cmlHandler.getGroup((group) => {
-        cmlHandler.getUserList(group, (playerList) => {
-            if (playerList && !playerList.toLowerCase().indexOf(rsn.toLowerCase()) > -1) {
-                cmlHandler.addPlayer(rsn.toLowerCase(), group, finalise);
-            } else finalise();
-        });
+    msg.reply("just a second...")
+        .then((_reply) => {
+            reply = _reply;
+            cmlHandler.getGroup((group) => {
+                cmlHandler.getUserList(group, (playerList) => {
+                    if (playerList && !playerList.toLowerCase().indexOf(rsn.toLowerCase()) > -1) {
+                        cmlHandler.addPlayer(rsn.toLowerCase(), group, finalise);
+                    } else finalise();
+                });
+            });
     });
 }
 
