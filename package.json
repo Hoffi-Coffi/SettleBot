@@ -12,7 +12,7 @@
         "clean": "node ./build-tools/clean.js",
         "clean:after": "node ./build-tools/cleanAfter.js",
         "build": "npm run clean && tsc && npm run bundle:local && npm run copy && npm run clean:after",
-        "buildprod": "npm run clean -- --prod && tsc && npm run bundle && npm run copy -- --prod && npm run clean:after"
+        "buildprod": "npm run clean -- --prod && tsc && npm run bundle && npm run clean:after"
     },
     "dependencies": {
         "@types/cheerio": "^0.22.11",
