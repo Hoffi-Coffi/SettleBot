@@ -2,13 +2,30 @@
     "name": "settle-bot",
     "version": "1.0.0",
     "description": "The Settlement Discord bot",
-    "main": "bot.js",
+    "private": true,
     "author": "Hoffi Coffi",
+    "main": "bot.js",
+    "scripts": {
+        "bundle": "rollup ./build/bot.js --silent --file ./dist/bot/bundle.js --format cjs",
+        "bundle:local": "rollup ./build/bot.js --silent --file ./local-run/bot/bundle.js --format cjs",
+        "copy": "node ./build-tools/copyFiles.js",
+        "clean": "node ./build-tools/clean.js",
+        "clean:after": "node ./build-tools/cleanAfter.js",
+        "build": "npm run clean && tsc && npm run bundle:local && npm run copy && npm run clean:after",
+        "buildprod": "npm run clean -- --prod && tsc && npm run bundle && npm run clean:after"
+    },
     "dependencies": {
+        "@types/cheerio": "^0.22.11",
+        "@types/form-data": "^2.2.1",
         "cheerio": "^1.0.0-rc.3",
         "discord.js": "^11.4.2",
         "form-data": "^2.3.3",
         "moment": "^2.24.0",
+        "reflect-metadata": "^0.1.13",
+        "tsyringe": "^3.2.0",
         "winston": "^3.2.1"
+    },
+    "devDependencies": {
+        "typescript": "^3.5.1"
     }
 }

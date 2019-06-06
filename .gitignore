@@ -94,3 +94,8 @@ stats.json
 badwords.json
 config.json
 utilities/guard.js
+
+# Output
+dist/
+build/
+local-run/

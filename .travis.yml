@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - stable
+install:
+  - npm install --global rollup
+  - npm install
+branches:
+  only:
+    - master
+script:
+  - npm run buildprod
