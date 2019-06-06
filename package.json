@@ -4,6 +4,16 @@
     "description": "The Settlement Discord bot",
     "private": true,
     "author": "Hoffi Coffi",
+    "main": "bot.js",
+    "scripts": {
+        "bundle": "rollup ./build/bot.js --silent --file ./dist/bot/bundle.js --format cjs",
+        "bundle:local": "rollup ./build/bot.js --silent --file ./local-run/bot/bundle.js --format cjs",
+        "copy": "node ./build-tools/copyFiles.js",
+        "clean": "node ./build-tools/clean.js",
+        "clean:after": "node ./build-tools/cleanAfter.js",
+        "build": "npm run clean && tsc && npm run bundle:local && npm run copy && npm run clean:after",
+        "buildprod": "npm run clean -- --prod && tsc && npm run bundle && npm run copy -- --prod && npm run clean:after"
+    },
     "dependencies": {
         "@types/cheerio": "^0.22.11",
         "@types/form-data": "^2.2.1",
@@ -16,9 +26,6 @@
         "winston": "^3.2.1"
     },
     "devDependencies": {
-        "awesome-typescript-loader": "^5.2.1",
-        "typescript": "^3.5.1",
-        "webpack": "^4.32.2",
-        "webpack-cli": "^3.3.2"
+        "typescript": "^3.5.1"
     }
 }

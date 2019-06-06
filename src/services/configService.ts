@@ -1,5 +1,5 @@
 import { singleton } from "tsyringe";
-import * as moment from "moment";
+import moment from "moment";
 import * as Discord from "discord.js";
 
 import { MemberService } from "./memberService";

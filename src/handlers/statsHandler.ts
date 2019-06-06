@@ -2,7 +2,7 @@ import {Logger} from '../utilities/logger';
 
 import {singleton} from 'tsyringe';
 import * as fs from 'fs';
-import * as moment from 'moment';
+import moment from 'moment';
 
 const MOD = "statsHandler.ts";
 

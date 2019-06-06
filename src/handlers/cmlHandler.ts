@@ -1,6 +1,6 @@
 import { singleton } from "tsyringe";
 import * as cheerio from "cheerio";
-import * as moment from "moment";
+import moment from "moment";
 import * as https from "https";
 import * as FormData from "form-data";
 
