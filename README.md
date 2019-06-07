@@ -26,7 +26,8 @@ SettleBot is constantly evolving. The next features to add are;
 * Automatically update SOTW competitors based on certain rules to prevent XP hiding
 * More competition types (clue scrolls, loot trackers, boss kills, etc.)
 
-A TypeScript overhaul, and improvements to SettleBot's deployment process, is also planned.
+## Technology
+SettleBot is written in TypeScript and runs on Node. It's tested using Jest and ts-jest. SettleBot uses travis to continuously build and validate itself.
 
 ## Want to help?
 Currently, SettleBot is not open for contributions. Watch this space!
