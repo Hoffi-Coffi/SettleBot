@@ -12,7 +12,8 @@
         "clean": "node ./build-tools/clean.js",
         "clean:after": "node ./build-tools/cleanAfter.js",
         "build": "npm run clean && tsc && npm run bundle:local && npm run copy && npm run clean:after",
-        "buildprod": "npm run clean -- --prod && tsc && npm run bundle && npm run clean:after"
+        "buildprod": "npm run clean -- --prod && tsc && npm run bundle && npm run clean:after",
+        "test": "jest"
     },
     "dependencies": {
         "@types/cheerio": "^0.22.11",
@@ -26,6 +27,9 @@
         "winston": "^3.2.1"
     },
     "devDependencies": {
+        "@types/jest": "^24.0.13",
+        "jest": "^24.8.0",
+        "ts-jest": "^24.0.2",
         "typescript": "^3.5.1"
     }
 }

@@ -36,7 +36,7 @@ export class Logger {
     /**
      * Gets the current time in a prettified format.
      */
-    timeNow(): string {
+    private timeNow(): string {
         var dateNow = new Date();
         return `${this.prettyUnit(dateNow.getHours())}:${this.prettyUnit(dateNow.getMinutes())}:${this.prettyUnit(dateNow.getSeconds())}`;
     }
@@ -45,7 +45,7 @@ export class Logger {
      * Prettifies the current time unit.
      * @param unit The unit to prettify.
      */
-    prettyUnit(unit: number): string {
+    private prettyUnit(unit: number): string {
         return `${((unit < 10) ? "0" : "") + unit}`;
     }
 };

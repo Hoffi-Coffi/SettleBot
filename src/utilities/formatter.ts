@@ -1,5 +1,7 @@
 export default class Formatter {
     static formatRSN(_rsn: string): string {
+        if (!_rsn) return _rsn;
+
         var split = _rsn.split("_");
         var result = [];
         split.forEach((val) => {
@@ -10,13 +12,19 @@ export default class Formatter {
     }
 
     static convertTime(time: string, ampm: string, appendZulu: boolean = true): string {
+        if (!time) return time;
+        
         var timeParts = time.split(":");
+
+        var hour = parseInt(timeParts[0]);
         if (ampm === "PM") {
-            var hour = parseInt(timeParts[0]);
             hour += 12;
 
             if (hour === 24) hour -= 12;
 
+            timeParts[0] = hour.toString();
+        } else if (hour === 12) {
+            hour = 0;
             timeParts[0] = hour.toString();
         }
 
@@ -70,7 +78,11 @@ export default class Formatter {
     }
 
     static momentifyDate(date: string): string {
+        if (!date) return date;
+
         var parts = date.split(' ');
+
+        if (parts.length < 5) return null;
 
         var month = this.mapMonth(parts[0]);
         var day = parts[1].replace(',', '');
