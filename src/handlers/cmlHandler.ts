@@ -26,7 +26,7 @@ export class CmlHandler {
 
     constructor(private logger: Logger, private configHandler: ConfigHandler) {}
 
-    getGroup(callback: Function): void {
+    getGroup(callback: (group: string, cmlErr?: string) => void): void {
         var compId = this.configHandler.getSetting("sotwCompId");
 
         var url = statsURL + compId;
@@ -50,7 +50,7 @@ export class CmlHandler {
         });
     }
 
-    getUserList(group: string, callback: Function): void {
+    getUserList(group: string, callback: (playerList: string, cmlErr?: string) => void): void {
         var url = `${createURL}?group=${group}`;
 
         https.get(url, (res) => {
@@ -247,7 +247,7 @@ export class CmlHandler {
         });
     }
 
-    updatePlayer(player: string, callback: Function): void {
+    updatePlayer(player: string, callback?: (content: string) => void): void {
         var url = updateURL + player;
 
         https.get(url, (res) => {
@@ -263,7 +263,7 @@ export class CmlHandler {
 
                     var content = $('#content').text();
 
-                    callback(content)
+                    callback(content);
                 }
             });
         });

@@ -8,7 +8,7 @@ var cmdArgs = process.argv.slice(2);
 if (cmdArgs[0] !== '--prod') {
     outDir = "./local-run/bot/";
     filesToCopy.forEach((val) => {
-        fs.copyFile(`./src/${val}`, `./local-run/bot/${val}`, (err) => {
+        fs.copyFile(`./src/${val}`, `./local-run/${val}`, (err) => {
             if (err) throw err;
             console.log(`Copied file "${val}" successfully`);
         });

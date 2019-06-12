@@ -8,7 +8,7 @@ import { Logger } from '../utilities/logger';
 import ServerUtils from '../utilities/serverUtils';
 import Formatter from '../utilities/formatter';
 
-const MOD = "memberService.js";
+const MOD = "memberService.ts";
 
 @singleton()
 export class MemberService {

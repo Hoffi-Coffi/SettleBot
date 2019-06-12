@@ -5,7 +5,7 @@ import { Logger } from "../utilities/logger";
 import Guard from "../utilities/guard";
 import ServerUtils from "../utilities/serverUtils";
 
-import { StatsHandler } from "../handlers/statsHandler";
+import { StatsHandler, Stat } from "../handlers/statsHandler";
 import { MemberHandler } from "../handlers/memberHandler";
 
 const MOD = "adminService.ts";
@@ -70,6 +70,7 @@ export class AdminService {
 
         ServerUtils.setUserRoles(mentionMemb, [this.muteRole], `Mute requested by ${msg.author.username}.`)
             .then(() => {
+                this.statsHandler.increment(Stat.MembersMutedManual);
                 ServerUtils.messageChannel(this.auditChannel, `${memb} has just muted ${mentionMemb}`);
                 ServerUtils.directMessage(mentionMemb, `Hi ${mentionMemb}, you were muted in the Settlement Discord server. To be unmuted, please DM a Settlement Defender or Admin.`)
             });
