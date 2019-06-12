@@ -12,7 +12,7 @@ import Formatter from "../utilities/formatter";
 import moment from "moment";
 import Discord from "discord.js";
 
-const MOD = "cmlService.js";
+const MOD = "cmlService.ts";
 
 const skillMap = [
     {skill: "attack", match: ["att", "atk", "attack"]}, {skill: "strength", match: ["str", "strength", "stren"]}, {skill: "defence", match: ["def", "defence", "defense"]},
@@ -36,8 +36,9 @@ export class CmlService {
         registerCallback("newcomp", (msg, args) => this.stageNewSotw(msg, args), (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
         registerCallback("abandon", (msg) => this.abandonSotw(msg), (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
         registerCallback("confirm", (msg) => this.confirmSotw(msg), (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
+        registerCallback("updateall", (msg) => this.updateAll(msg), (msg) => Guard.isSeniorMod(msg));
 
-        this.logger.info("Registered 6 commands.", MOD);
+        this.logger.info("Registered 7 commands.", MOD);
     }
 
     updatePlayer(msg: Discord.Message, args: string[]) {
@@ -71,6 +72,45 @@ export class CmlService {
                     else msg.reply(`updated RSN "${Formatter.formatRSN(search)}" successfully.`);
                 });
             });
+    }
+
+    private updateAll(msg: Discord.Message) {
+        msg.reply("on it. It may take a while, but I'll let you know when it's done.").then((reply: Discord.Message) => {
+            this.cmlHandler.getGroup((group, cmlErr) => {
+                if (!group && cmlErr) {
+                    msg.reply(`CML says: "${cmlErr}"`);
+                    return;
+                }
+
+                this.logger.info(`Found group ${group}. Getting userlist...`);
+                this.cmlHandler.getUserList(group, (playerList, cmlErr) => {
+                    if (!playerList && cmlErr) {
+                        msg.reply(`CML had this to say: "${cmlErr}"`);
+                        return;
+                    }
+
+                    var players = playerList.split('\n');
+
+                    var count = players.length - 1;
+
+                    this.logger.info(`Beginning update of ${count} players!`, MOD);
+
+                    players.forEach((val: string) => {
+                        if (!val) return;
+
+                        this.cmlHandler.updatePlayer(val, () => {
+                            count--;
+                            this.logger.info(`A player finished updating. Remaining players: ${count}...`, MOD);
+
+                            if (count === 0) {
+                                reply.delete();
+                                msg.reply("all competitors updated!");
+                            }
+                        });
+                    });
+                });
+            });
+        });
     }
 
     private skillOfTheWeek(msg: Discord.Message, args: string[]): void {

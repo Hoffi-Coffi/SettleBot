@@ -6,9 +6,23 @@ import moment from 'moment';
 
 const MOD = "statsHandler.ts";
 
+interface IStat {
+    name: Stat;
+    count: number;
+}
+
+export enum Stat {
+    MessagesSeen = "messagesseen",
+    WordsScanned = "wordsscanned",
+    BadWordsFound = "badwordsfound",
+    DeletedMessages = "deletedmessages",
+    MembersMutedAuto = "membersmutedauto",
+    MembersMutedManual = "membersmutedmanual"
+};
+
 @singleton()
 export class StatsHandler {
-    private storedStats = []; //todo type up
+    private storedStats: IStat[] = [];
     private wokeUp: moment.Moment = moment();
 
     constructor(private logger: Logger) {
@@ -29,7 +43,7 @@ export class StatsHandler {
                 return;
             }
     
-            model.forEach((obj) => this.storedStats.push(obj));
+            model.forEach((obj: IStat) => this.storedStats.push(obj));
     
             this.logger.info("Stats loaded", MOD);
         });
@@ -39,9 +53,7 @@ export class StatsHandler {
         return this.wokeUp;
     }
 
-    increment(stat: string): void { //todo enum?
-        stat = stat.toLowerCase();
-
+    increment(stat: Stat): void {
         var findStat = this.storedStats.find((obj) => obj.name === stat);
 
         if (findStat) {
@@ -57,10 +69,8 @@ export class StatsHandler {
         }
     }
 
-    getStat(stat: string): number {
-        stat = stat.toLowerCase();
-
-        var foundStat = this.storedStats.find((obj) => obj.name.toLowerCase() === stat);
+    getStat(stat: Stat): number {
+        var foundStat = this.storedStats.find((obj) => obj.name === stat);
 
         return (foundStat) ? foundStat.count : 0;
     }

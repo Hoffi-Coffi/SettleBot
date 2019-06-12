@@ -1,7 +1,7 @@
 import {Logger} from '../utilities/logger';
 import Guard from '../utilities/guard';
 
-import {StatsHandler} from '../handlers/statsHandler';
+import {StatsHandler, Stat} from '../handlers/statsHandler';
 
 import { injectable } from 'tsyringe';
 import Discord from 'discord.js';
@@ -20,12 +20,12 @@ export class StatsService {
     }
 
     private printStats(msg: Discord.Message): void {
-        var messagesSeen = this.handler.getStat("messagesseen");
-        var wordsScanned = this.handler.getStat("wordsscanned");
-        var badWordsFound = this.handler.getStat("badwordsfound");
-        var deletedMessages = this.handler.getStat("deletedmessages");
-        var membersMutedAuto = this.handler.getStat("membersmutedauto");
-        var membersMutedManual = this.handler.getStat("membersmutedmanual");
+        var messagesSeen = this.handler.getStat(Stat.MessagesSeen);
+        var wordsScanned = this.handler.getStat(Stat.WordsScanned);
+        var badWordsFound = this.handler.getStat(Stat.BadWordsFound);
+        var deletedMessages = this.handler.getStat(Stat.DeletedMessages);
+        var membersMutedAuto = this.handler.getStat(Stat.MembersMutedAuto);
+        var membersMutedManual = this.handler.getStat(Stat.MembersMutedManual);
 
         var messagesWord = (messagesSeen === 1) ? "message" : "messages";
         var wordsScannedWord = (wordsScanned === 1) ? "word" : "words";

@@ -23,7 +23,7 @@ var cmdHandler = container.resolve(CommandHandler);
 var filterService = container.resolve(FilterService);
 //#endregion
 
-const MOD = "bot.js";
+const MOD = "bot.ts";
 
 var cmdArgs = process.argv.slice(2);
 Guard.setDevMode(cmdArgs[0] !== '--prod');

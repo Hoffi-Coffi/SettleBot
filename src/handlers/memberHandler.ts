@@ -2,7 +2,7 @@ import { singleton } from 'tsyringe';
 import { Logger } from '../utilities/logger';
 import * as fs from 'fs';
 
-const MOD = "memberHandler.js";
+const MOD = "memberHandler.ts";
 
 @singleton()
 export class MemberHandler {
