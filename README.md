@@ -17,10 +17,10 @@ Currently, SettleBot provides the following features;
 * Allows players to register their RSN with the bot to automatically include their RSN in future commands
     * Automatically adds registered players to the CML tracker
 * Statistics!
+* A help command to familiarise new users with the bot's commands.
 
 ## Roadmap
 SettleBot is constantly evolving. The next features to add are;
-* A help command!
 * A stats-lookup command
 * Event tracking and management
 * Automatically update SOTW competitors based on certain rules to prevent XP hiding
