@@ -1,6 +1,6 @@
 {
     "name": "settle-bot",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "The Settlement Discord bot",
     "private": true,
     "author": "Hoffi Coffi",

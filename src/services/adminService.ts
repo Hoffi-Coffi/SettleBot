@@ -5,7 +5,7 @@ import { Logger } from "../utilities/logger";
 import Guard from "../utilities/guard";
 import ServerUtils from "../utilities/serverUtils";
 
-import { StatsHandler, Stat } from "../handlers/statsHandler";
+import { MetricHandler, Metric } from "../handlers/metricHandler";
 import { MemberHandler } from "../handlers/memberHandler";
 
 const MOD = "adminService.ts";
@@ -16,7 +16,7 @@ export class AdminService {
     private auditChannel: Discord.TextChannel;
     private muteRole: Discord.Role;
 
-    constructor(private statsHandler: StatsHandler, private memberHandler: MemberHandler, private logger: Logger) {}
+    constructor(private metricHandler: MetricHandler, private memberHandler: MemberHandler, private logger: Logger) {}
 
     startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
         registerCallback("logout", (msg) => this.logout(msg), (msg) => Guard.isSeniorMod(msg));
@@ -48,7 +48,7 @@ export class AdminService {
     
         if (!Guard.isDevMode()) ServerUtils.messageChannel(this.auditChannel, `Shutting down by request of ${msg.guild.member(msg.author)} :cry:`);
 
-        this.statsHandler.shutdown(() => this.memberHandler.shutdown(() => this.destroyFunc()));
+        this.metricHandler.shutdown(() => this.memberHandler.shutdown(() => this.destroyFunc()));
     }
 
     muteMember(msg: Discord.Message): void {
@@ -70,7 +70,7 @@ export class AdminService {
 
         ServerUtils.setUserRoles(mentionMemb, [this.muteRole], `Mute requested by ${msg.author.username}.`)
             .then(() => {
-                this.statsHandler.increment(Stat.MembersMutedManual);
+                this.metricHandler.increment(Metric.MembersMutedManual);
                 ServerUtils.messageChannel(this.auditChannel, `${memb} has just muted ${mentionMemb}`);
                 ServerUtils.directMessage(mentionMemb, `Hi ${mentionMemb}, you were muted in the Settlement Discord server. To be unmuted, please DM a Settlement Defender or Admin.`)
             });
