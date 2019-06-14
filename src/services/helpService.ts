@@ -43,6 +43,9 @@ export class HelpService {
         response += "After you're registered with me, you can use the `&update` command to update your standing on the leaderboard, which you can then view by using the command `&sotw`! ";
         response += "Don't worry if you're not in the top-5 yet - when you're registered with me, I'll be sure to show you your ranking when you use the `&sotw` command.\n\n";
 
+        response += "I can also look up people's stats from the Runescape hiscores! You can use the command `&stats <rsn>` and I'll tell you that user's stats. If you've registered your ";
+        response += "RSN with me, you can also just run `&stats` and I'll post your stats. Please use this command responsibly.\n\n";
+
         response += "I do a few other things, but they're mostly in the background to support the server staff. However, I'm improving all the time, so watch this space!";
 
         ServerUtils.directMessage(msg.guild.member(msg.author), response);

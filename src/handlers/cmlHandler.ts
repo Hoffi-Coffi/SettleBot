@@ -15,9 +15,10 @@ const baseURL = "https://crystalmathlabs.com/tracker";
 
 const siteBaseURL = `${baseURL}/competitions.php?competition=`;
 const updateURL = `${baseURL}/update.php?player=`;
-const statsURL = `${baseURL}/virtualhiscores.php?page=statistics&competition=`;
+const groupURL = `${baseURL}/virtualhiscores.php?page=statistics&competition=`;
 const createURL = `${baseURL}/compcreate.php`;
 const groupEditURL = `${baseURL}/groupedit.php?group=`;
+const statsURL = `${baseURL}/view_stats.php?time=all&player=`;
 
 @singleton()
 export class CmlHandler {
@@ -29,7 +30,7 @@ export class CmlHandler {
     getGroup(callback: (group: string, cmlErr?: string) => void): void {
         var compId = this.configHandler.getSetting("sotwCompId");
 
-        var url = statsURL + compId;
+        var url = groupURL + compId;
 
         https.get(url, (res) => {
             let data = '';
@@ -194,6 +195,50 @@ export class CmlHandler {
         form.submit(url, (err) => {
             if (err) this.logger.error(`Failed to add "${player}" to CML. Reason: ${err}`, MOD);
             else if (callback) callback();
+        });
+    }
+
+    getStatsData(rsn: string, callback: (data: string) => any): void {
+        var url = statsURL + rsn;
+
+        https.get(url, (res) => {
+            let data = '';
+
+            res.on('data', (chunk) => {
+                data += chunk;
+            });
+
+            res.on('end', () => {
+                var $ = cheerio.load(data);
+
+                var table = $('#stats_table > tbody');
+
+                var callbackData = '';
+
+                var rows = table.children('tr');
+
+                rows.each((i, elem) => {
+                    if (i === 0 || i === rows.length - 1) return;
+                    var row = $(elem);
+                    var rowToAdd = "";
+                    var ignoreRow = false;
+
+                    row.children('td').each((i2, elem2) => {
+                        if (i2 === 4) return;
+
+                        var cell = $(elem2);
+                        if (!ignoreRow && cell.text().indexOf("EHP") > -1) ignoreRow = true;
+                        
+                        rowToAdd += cell.text().trim().split(',').join('');
+
+                        if (i2 !== 3) rowToAdd += ",";
+                    });
+
+                    if (!ignoreRow) callbackData += rowToAdd + "\n";
+                });
+
+                callback(callbackData);
+            });
         });
     }
 

@@ -1,7 +1,7 @@
 import { singleton } from 'tsyringe';
 import * as Discord from "discord.js";
 
-import { StatsService } from '../services/statsService';
+import { MetricService } from '../services/metricService';
 import { AdminService } from '../services/adminService';
 import { MemberService } from '../services/memberService';
 import { FilterService } from '../services/filterService';
@@ -10,6 +10,7 @@ import { ConfigService } from '../services/configService';
 
 import { Logger } from '../utilities/logger';
 import { HelpService } from '../services/helpService';
+import { StatsService } from '../services/statsService';
 
 const MOD = "commandHandler.ts";
 
@@ -17,13 +18,14 @@ const MOD = "commandHandler.ts";
 export class CommandHandler {
     private commandDefinitions = [];
 
-    constructor(private statsService: StatsService, 
+    constructor(private metricService: MetricService, 
         private adminService: AdminService, 
         private memberService: MemberService, 
         private filterService: FilterService,
         private cmlService: CmlService, 
         private configService: ConfigService, 
         private helpService: HelpService,
+        private statsService: StatsService,
         private logger: Logger) {}
 
     private registerCommand(trigger: string, action: Function, preReq?: (msg: Discord.Message) => boolean): void {
@@ -42,13 +44,14 @@ export class CommandHandler {
     }
 
     startup(): void {
-        this.statsService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
+        this.metricService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
         this.adminService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
         this.memberService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
         this.filterService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
         this.cmlService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
         this.configService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
         this.helpService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
+        this.statsService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
 
         this.logger.info(`Command registration complete. Total commands: ${this.commandDefinitions.length}`, MOD);
     }

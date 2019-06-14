@@ -4,9 +4,14 @@ import * as fs from 'fs';
 
 const MOD = "memberHandler.ts";
 
+interface Member {
+    rsn: string,
+    user: string
+};
+
 @singleton()
 export class MemberHandler {
-    private registeredNames = []; //todo type up
+    private registeredNames: Member[] = [];
 
     constructor(private logger: Logger) {
         this.load();
@@ -41,7 +46,7 @@ export class MemberHandler {
         }
     }
 
-    get(user: string) {
+    get(user: string): Member {
         return this.registeredNames.find(name => name.user === user);
     }
 

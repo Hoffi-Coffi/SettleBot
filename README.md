@@ -18,10 +18,10 @@ Currently, SettleBot provides the following features;
     * Automatically adds registered players to the CML tracker
 * Statistics!
 * A help command to familiarise new users with the bot's commands.
+* A stats command to look up players on the OSRS hiscores.
 
 ## Roadmap
 SettleBot is constantly evolving. The next features to add are;
-* A stats-lookup command
 * Event tracking and management
 * Automatically update SOTW competitors based on certain rules to prevent XP hiding
 * More competition types (clue scrolls, loot trackers, boss kills, etc.)

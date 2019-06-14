@@ -2,7 +2,7 @@ import { injectable } from 'tsyringe';
 import Discord from "discord.js";
 
 import { FilterHandler } from '../handlers/filterHandler';
-import { StatsHandler, Stat } from '../handlers/statsHandler';
+import { MetricHandler, Metric } from '../handlers/metricHandler';
 import { OffenderHandler } from '../handlers/offenderHandler';
 
 import { AdminService } from './adminService';
@@ -15,7 +15,7 @@ const MOD = "filterService.ts";
 
 @injectable()
 export class FilterService {
-    constructor(private filterHandler: FilterHandler, private statsHandler: StatsHandler, 
+    constructor(private filterHandler: FilterHandler, private metricHandler: MetricHandler, 
         private offenderHandler: OffenderHandler, private adminService: AdminService, private logger: Logger) {}
 
     startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
@@ -26,11 +26,11 @@ export class FilterService {
     }
 
     scan(msg: Discord.Message): void {
-        this.statsHandler.increment(Stat.MessagesSeen);
+        this.metricHandler.increment(Metric.MessagesSeen);
         var words = JSON.stringify(msg.content).split(' ');
 
         words.some(word => {
-            this.statsHandler.increment(Stat.WordsScanned);
+            this.metricHandler.increment(Metric.WordsScanned);
             var result = this.filterHandler.checkword(word);
 
             if (!result) return false;
@@ -39,10 +39,10 @@ export class FilterService {
 
             switch (result) {
                 case "delete":
-                    this.statsHandler.increment(Stat.BadWordsFound);
+                    this.metricHandler.increment(Metric.BadWordsFound);
 
                     ServerUtils.deleteMessage(msg, () => {
-                        this.statsHandler.increment(Stat.DeletedMessages);
+                        this.metricHandler.increment(Metric.DeletedMessages);
                         this.offenderHandler.add(msg.author.username);
 
                         var result = this.offenderHandler.check(msg.author.username);
@@ -52,7 +52,7 @@ export class FilterService {
                         } else if (result === "mute") {
                             ServerUtils.setUserRoles(memb, [this.adminService.getMuteRole()], "Member reached 4 infractions.")
                                 .then(() => {
-                                    this.statsHandler.increment(Stat.MembersMutedAuto);
+                                    this.metricHandler.increment(Metric.MembersMutedAuto);
                                     ServerUtils.messageChannel(this.adminService.getAuditChannel(), `${memb} was muted because they reached 4 infractions.`);
                                     ServerUtils.directMessage(memb, `Hi ${memb}, you were muted in the Settlement Discord server for bad language. To be unmuted, please DM a Settlement Defender or Admin.`);
                                 })
@@ -63,15 +63,15 @@ export class FilterService {
                     });
                     return true;
                 case "mute":
-                    this.statsHandler.increment(Stat.BadWordsFound);
+                    this.metricHandler.increment(Metric.BadWordsFound);
 
                     ServerUtils.deleteMessage(msg, () => {
-                        this.statsHandler.increment(Stat.DeletedMessages);
+                        this.metricHandler.increment(Metric.DeletedMessages);
                         this.offenderHandler.add(msg.author.username);
 
                         ServerUtils.setUserRoles(memb, [this.adminService.getMuteRole()], "Member triggered the mutelist.")
                             .then(() => {
-                                this.statsHandler.increment(Stat.MembersMutedAuto);
+                                this.metricHandler.increment(Metric.MembersMutedAuto);
                                 ServerUtils.messageChannel(this.adminService.getAuditChannel(), `${memb} was muted because they triggered the mutelist.`);
                                 ServerUtils.directMessage(memb, `Hi ${memb}, you were muted in the Settlement Discord server for bad language. To be unmuted, please DM a Settlement Defender or Admin.`);
                             })

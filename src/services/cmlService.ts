@@ -42,7 +42,7 @@ export class CmlService {
     }
 
     updatePlayer(msg: Discord.Message, args: string[]) {
-        var search = "";
+        var search: any;
 
         var getRSN = this.memberHandler.get(msg.author.username);
 
