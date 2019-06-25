@@ -48,7 +48,16 @@ export class StatsService {
             var lines = data.split('\n');
             var cells: string[][] = [];
             lines.forEach((line) => {
-                if (line.length > 1) cells.push(line.split(','));
+                if (line.length > 1) {
+                    var newRow = [];
+                    var row = line.split(',');
+                    newRow.push(row[0]);
+                    newRow.push(parseInt(row[1]).toLocaleString());
+                    newRow.push(parseInt(row[2]).toLocaleString());
+                    newRow.push(parseInt(row[3]).toLocaleString());
+
+                    cells.push(newRow);
+                }
             });
             
             var table: Table = {
