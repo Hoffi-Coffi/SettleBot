@@ -5,7 +5,6 @@ import { CmlHandler } from "../handlers/cmlHandler";
 import { Logger } from "../utilities/logger";
 import { MemberHandler } from "../handlers/memberHandler";
 import Formatter from "../utilities/formatter";
-import { ENGINE_METHOD_ALL } from "constants";
 import TableBuilder, { Table } from "../utilities/tableBuilder";
 
 const MOD = "statsService.ts";
