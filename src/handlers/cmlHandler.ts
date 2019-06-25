@@ -8,6 +8,7 @@ import { Logger } from "../utilities/logger";
 import Formatter from "../utilities/formatter";
 
 import { ConfigHandler } from "../handlers/configHandler";
+import TableBuilder, { Table } from "../utilities/tableBuilder";
 
 const MOD = "cmlHandler.ts";
 
@@ -378,194 +379,70 @@ export class CmlHandler {
         return siteBaseURL + this.configHandler.getSetting("sotwCompId");
     }
 
-    sotw(callback: Function, limitTop: number = 5, search?: string) {
+    sotw(callback: (msg: string) => void, limitTop: number = 5, search?: string) {
         this.getData((data) => {
-            var lines = data.split('\n');
-            
-            var longestName = 4, longestStart = 5, longestEnd = 3, longestGain = 4;
-    
-            var found = lines.find((obj) => {
-                var line = obj.split(",");
-                return line[0].toLowerCase().trim() === search.toLowerCase().trim();
-            });
-    
-            if (found) {
-                var line = found.split(',');
-                var foundName = Formatter.formatRSN(line[0].trim());
-                if (foundName.length > longestName) longestName = foundName.length;
-    
-                var foundStart = parseInt(line[1].trim()).toLocaleString();
-                if (foundStart.length > longestStart) longestStart = foundStart.length;
-    
-                var foundEnd = parseInt(line[2].trim()).toLocaleString();
-                if (foundEnd.length > longestEnd) longestEnd = foundEnd.length;
-    
-                var foundGain = parseInt(line[3].trim()).toLocaleString();
-                if (foundGain.length > longestGain) longestGain = foundGain.length;
-            }
-    
-            var i = 0;
-            lines.forEach((obj) => {
-                i++;
-                if (i > limitTop) return;
-                if (obj.length < 4) return;
-                var line = obj.split(',');
-    
-                var name = Formatter.formatRSN(line[0].trim());
-                if (name.length > longestName) longestName = name.length;
-                var start = parseInt(line[1].trim()).toLocaleString();
-                if (start.length > longestStart) longestStart = start.length;
-                var end = parseInt(line[2].trim()).toLocaleString();
-                if (end.length > longestEnd) longestEnd = end.length;
-                var gain = parseInt(line[3].trim()).toLocaleString();
-                if (gain.length > longestGain) longestGain = gain.length;
-            });
-    
-            var sepLine = "┌──────┬─";
-            sepLine = `${sepLine.pad(longestName, "─")}─┬─`;
-            sepLine = `${sepLine.pad(longestStart, "─")}─┬─`;
-            sepLine = `${sepLine.pad(longestEnd, "─")}─┬─`;
-            sepLine = `${sepLine.pad(longestGain, "─")}─┐`;
-    
-            var textLine = `Skill: ${this.configHandler.getSetting("sotwSkill")}`;
-            var padEnd = sepLine.length - 4 - textLine.length;
-            var result = `${sepLine.split('┬').join('─')}\n│ ${textLine}`;
-    
-            var sotwStart = moment(this.configHandler.getSetting("sotwStart"));
-            textLine = `Started: ${sotwStart.format('Do MMM YYYY, h:mmA')} GMT`;
-            result = `${result.pad(padEnd, " ")} │\n│ ${textLine}`;
-    
-            padEnd = sepLine.length - 4 - textLine.length;
-            result = `${result.pad(padEnd, " ")} │\n`;
-    
             var sotwEnd = moment(this.configHandler.getSetting("sotwEnd"));
-            var endWord = "Ends";
-            if (sotwEnd.isBefore(moment())) endWord = "Ended";
-    
-            textLine = `${endWord}: ${sotwEnd.format('Do MMM YYYY, h:mmA')} GMT`;
-            result += `│ ${textLine}`;
-    
-            padEnd = sepLine.length - 4 - textLine.length;
-            result = `${result.pad(padEnd, " ")} │\n│`;
-    
-            if (sotwEnd.isAfter(moment())) {
-                textLine = `Ends ${sotwEnd.fromNow()}`;
-                result += ` ${textLine}`;
-    
-                padEnd = sepLine.length - 4 - textLine.length;
-                result = `${result.pad(padEnd, " ")} │\n│`;
-            }
-    
-            padEnd = sepLine.length - 2;
-            result = `${result.pad(padEnd, " ")}│\n`;
-    
-            sepLine = sepLine.replace("┌", "├").replace("┐", "┤");
-            result += `${sepLine}\n│ Pos. │ RSN`;
-    
-            padEnd = longestName - 3;
-            result = `${result.pad(padEnd, " ")} │ Start`;
-    
-            padEnd = longestStart - 5;
-            result = `${result.pad(padEnd, " ")} │ End`;
-    
-            padEnd = longestEnd - 3;
-            result = `${result.pad(padEnd, " ")} │ Gain`;
-    
-            sepLine = sepLine.split("┬").join("┼");
-    
-            padEnd = longestGain - 4;
-            result = `${result.pad(padEnd, " ")} │\n${sepLine}`;
-    
-            i = 0;
-            lines.forEach((obj) => {
-                i++;
-                if (i > limitTop) return;
-                if (obj.length < 1) return;
-                var line = obj.split(',');
-    
-                result += `\n│ ${i}`;
-    
-                padEnd = 4 - i.toString().length;
-                var name = Formatter.formatRSN(line[0].trim());
-                result = `${result.pad(padEnd, " ")} │ ${name}`;
-    
-                padEnd = longestName - name.length;
-                var start = parseInt(line[1]).toLocaleString();
-                result = `${result.pad(padEnd, " ")} │ ${start}`;
-    
-                padEnd = longestStart - start.length;
-                var end = parseInt(line[2]).toLocaleString();
-                result = `${result.pad(padEnd, " ")} │ ${end}`;
-    
-                padEnd = longestEnd - end.length;
-                var gain = parseInt(line[3]).toLocaleString();
-                result = `${result.pad(padEnd, " ")} │ ${gain}`;
-    
-                padEnd = longestGain - gain.length;
-                result = `${result.pad(padEnd, " ")} │`;
+            var endWord = (sotwEnd.isBefore(moment())) ? "Ended" : "Ends";
+            var tableHeader = [
+                `Skill: ${this.configHandler.getSetting("sotwSkill")}`,
+                `Started: ${moment(this.configHandler.getSetting("sotwStart")).format("Do MMM YYYY, h:mmA")} GMT`,
+                `${endWord}: ${sotwEnd.format("Do MMM YYYY, h:mmA")} GMT`
+            ];
+
+            if (sotwEnd.isAfter(moment())) tableHeader.push(`Ends ${sotwEnd.fromNow()}`);
+
+            var lines = data.split('\n');
+            var cells: string[][] = [];
+            lines.forEach((line, idx) => {
+                if (idx + 1 > limitTop) return;
+                if (line.length > 1) {
+                    var newRow = [(idx + 1).toString()];
+                    var row = line.split(',');
+                    newRow.push(Formatter.formatRSN(row[0].trim()));
+                    newRow.push(parseInt(row[1]).toLocaleString());
+                    newRow.push(parseInt(row[2]).toLocaleString());
+                    newRow.push(parseInt(row[3]).toLocaleString());
+
+                    cells.push(newRow);
+                }
             });
-    
+
             var reduce = 0;
-    
-            if (search && search.length > 0 && result.indexOf(Formatter.formatRSN(search.toLowerCase()).trim()) < 0 && found) {
-                reduce++;
-                result += `\n│ ..`;
-    
-                result = `${result.pad(2, " ")} │ ..`;
-    
-                padEnd = longestName - 2;
-                result = `${result.pad(padEnd, " ")} │ ..`;
-    
-                padEnd = longestStart - 2;
-                result = `${result.pad(padEnd, " ")} │ ..`;
-    
-                padEnd = longestEnd - 2;
-                result = `${result.pad(padEnd, " ")} │ ..`;
-    
-                padEnd = longestGain - 2;
-                result = `${result.pad(padEnd, " ")} │\n`;
-    
-                var line = found.split(',');
-    
-                var pos = lines.indexOf(found) + 1;
-                result += `│ ${pos}`;
-    
-                padEnd = 4 - pos.toString().length;
-                var name = Formatter.formatRSN(line[0].trim());
-                result = `${result.pad(padEnd, " ")} │ ${name}`;
-    
-                padEnd = longestName - name.length;
-                var start = parseInt(line[1]).toLocaleString();
-                result = `${result.pad(padEnd, " ")} │ ${start}`;
-    
-                padEnd = longestStart - start.length;
-                var end = parseInt(line[2]).toLocaleString();
-                result = `${result.pad(padEnd, " ")} │ ${end}`;
-    
-                padEnd = longestEnd - end.length;
-                var gain = parseInt(line[3]).toLocaleString();
-                result = `${result.pad(padEnd, " ")} │ ${gain}`;
-    
-                padEnd = longestGain - gain.length;
-                result = `${result.pad(padEnd, " ")} │`;
+            if (search) {
+                var found = lines.find((obj) => {
+                    var line = obj.split(',');
+                    return line && line.length > 0 && line[0].toLowerCase().trim() === search.toLowerCase().trim();
+                });
+
+                if (found && !cells.find((obj) => {
+                    return obj[0].toLowerCase().trim() === search.toLowerCase().trim();
+                })) {
+                    reduce++;
+                    cells.push(["...", "...", "...", "...", "..."]);
+                    var newRow = [(lines.indexOf(found) + 1).toString()];
+                    var row = found.split(',');
+                    newRow.push(Formatter.formatRSN(row[0].trim()));
+                    newRow.push(parseInt(row[1]).toLocaleString());
+                    newRow.push(parseInt(row[2]).toLocaleString());
+                    newRow.push(parseInt(row[3]).toLocaleString());
+
+                    cells.push(newRow);
+                }
             }
-    
-            sepLine = sepLine.split("┼").join("┴");
-    
-            result += `\n${sepLine}`;
-    
-            sepLine = sepLine.replace("├", "└").split("┴").join("─").replace("┤", "┘");
-    
+
+            var foot = undefined;
             if (lines.length > limitTop) {
-                result += "\n";
-    
-                var text = `...plus ${lines.length - limitTop - reduce} more...`;
-    
-                padEnd = sepLine.length - 4 - text.length;
-                result += `│ ${text}`;
-    
-                result = `${result.pad(padEnd, " ")} │\n${sepLine}`;
+                foot = [`...plus ${lines.length - limitTop - reduce} more...`];
             }
+
+            var table: Table = {
+                header: tableHeader,
+                columns: ["Pos.", "RSN", "Start", "End", "Gain"],
+                rows: cells,
+                footer: foot
+            };
+
+            var result = TableBuilder.build(table);
     
             callback("```" + result + "```");
         });
