@@ -6,7 +6,7 @@ import moment from 'moment';
 
 const MOD = "metricHandler.ts";
 
-interface IMetric {
+export interface IMetric {
     name: Metric;
     count: number;
 }

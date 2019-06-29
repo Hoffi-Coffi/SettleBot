@@ -24,6 +24,8 @@ const newLine = "\n";
 
 export default class TableBuilder {
     static build(table: Table): string {
+        if (!table) return undefined;
+
         var result = "";
 
         var bodyRes = this.buildBody(table.rows, table.header !== undefined, table.footer !== undefined, table.columns);

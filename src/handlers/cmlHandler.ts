@@ -414,11 +414,12 @@ export class CmlHandler {
                     return line && line.length > 0 && line[0].toLowerCase().trim() === search.toLowerCase().trim();
                 });
 
+                var formattedSearch = Formatter.formatRSN(search.trim());
                 if (found && !cells.find((obj) => {
-                    return obj[0].toLowerCase().trim() === search.toLowerCase().trim();
+                    return Formatter.formatRSN(obj[1].trim()) === formattedSearch;
                 })) {
                     reduce++;
-                    cells.push(["...", "...", "...", "...", "..."]);
+                    cells.push(["..", "..", "..", "..", ".."]);
                     var newRow = [(lines.indexOf(found) + 1).toString()];
                     var row = found.split(',');
                     newRow.push(Formatter.formatRSN(row[0].trim()));

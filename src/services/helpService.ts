@@ -24,8 +24,8 @@ export class HelpService {
         this.sotwChannel = <Discord.TextChannel>_sotwChannel;
     }
 
-    private help(msg: Discord.Message): void {
-        var memb = msg.guild.member(msg.author);
+    private help(msg?: Discord.Message): void {
+        var memb = (msg) ? msg.guild.member(msg.author) : "there";
         var response = `Hi ${memb}! I'm SettleBot.\n\n`;
         response += "At the moment, I'm responsible for making sure the Settlement Discord server stays wholesome. ";
         

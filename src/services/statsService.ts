@@ -53,8 +53,8 @@ export class StatsService {
                     var row = line.split(',');
                     newRow.push(row[0]);
                     newRow.push(parseInt(row[1]).toLocaleString());
-                    newRow.push(parseInt(row[2]).toLocaleString());
                     newRow.push(parseInt(row[3]).toLocaleString());
+                    newRow.push(parseInt(row[2]).toLocaleString());
 
                     cells.push(newRow);
                 }

@@ -12,14 +12,14 @@ const MOD = "metricService.ts";
 export class MetricService {
     constructor(private handler: MetricHandler, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("metrics", (msg) => this.printMetrics(msg), (msg) => Guard.isMod(msg));
-        registerCallback("uptime", (msg) => this.uptime(msg), (msg) => Guard.isMod(msg));
+    startup(registerCallback: (trigger: string, action: (msg?: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
+        registerCallback("metrics", () => this.getMetrics(), (msg) => Guard.isMod(msg));
+        registerCallback("uptime", () => this.uptime(), (msg) => Guard.isMod(msg));
 
         this.logger.info("Registered 2 commands.", MOD);
     }
 
-    private printMetrics(msg: Discord.Message): void {
+    getMetrics(): string {
         var messagesSeen = this.handler.getMetric(Metric.MessagesSeen);
         var wordsScanned = this.handler.getMetric(Metric.WordsScanned);
         var badWordsFound = this.handler.getMetric(Metric.BadWordsFound);
@@ -34,10 +34,10 @@ export class MetricService {
         var muteAutoWord = (membersMutedAuto === 1) ? "person" : "people";
         var muteManWord = (membersMutedManual === 1) ? "person" : "people";
 
-        msg.reply(`I have seen ${messagesSeen.toLocaleString()} ${messagesWord} and scanned a total of ${wordsScanned.toLocaleString()} ${wordsScannedWord}! Of those, I've found ${badWordsFound.toLocaleString()} filtered ${badWordsWord}. I've deleted ${deletedMessages.toLocaleString()} ${deletedMessagesWord}. I've muted ${membersMutedAuto.toLocaleString()} ${muteAutoWord} automatically, and ${membersMutedManual.toLocaleString()} ${muteManWord} on behalf of moderators.`);
+        return `I have seen ${messagesSeen.toLocaleString()} ${messagesWord} and scanned a total of ${wordsScanned.toLocaleString()} ${wordsScannedWord}! Of those, I've found ${badWordsFound.toLocaleString()} filtered ${badWordsWord}. I've deleted ${deletedMessages.toLocaleString()} ${deletedMessagesWord}. I've muted ${membersMutedAuto.toLocaleString()} ${muteAutoWord} automatically, and ${membersMutedManual.toLocaleString()} ${muteManWord} on behalf of moderators.`;
     }
 
-    private uptime(msg: Discord.Message): void {
-        msg.reply(`I woke up ${this.handler.getWokeUp().fromNow()}!`);
+    uptime(): string {
+        return `I woke up ${this.handler.getWokeUp().fromNow()}!`;
     }
 };
