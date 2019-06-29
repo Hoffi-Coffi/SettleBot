@@ -9,6 +9,7 @@ import { ConfigHandler } from "../handlers/configHandler";
 
 import { Logger } from "../utilities/logger";
 import Guard from "../utilities/guard";
+import { CommandType } from "../handlers/commandHandler";
 
 const MOD = "configService.ts";
 
@@ -29,8 +30,8 @@ export class ConfigService {
 
     constructor(private memberService: MemberService, private cmlHandler: CmlHandler, private configHandler: ConfigHandler, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("setconfig", (msg, args) => this.setConfig(msg, args), (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
+    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
+        registerCallback("setconfig", (msg, args) => this.setConfig(msg, args), CommandType.Private, (msg) => Guard.isSeniorMod(msg));
 
         this.logger.info("Registered 1 command.", MOD);
     }

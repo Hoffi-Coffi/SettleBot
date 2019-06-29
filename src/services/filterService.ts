@@ -10,6 +10,7 @@ import { AdminService } from './adminService';
 import { Logger } from '../utilities/logger';
 import ServerUtils from "../utilities/serverUtils";
 import Guard from "../utilities/guard";
+import { CommandType } from '../handlers/commandHandler';
 
 const MOD = "filterService.ts";
 
@@ -18,9 +19,9 @@ export class FilterService {
     constructor(private filterHandler: FilterHandler, private metricHandler: MetricHandler, 
         private offenderHandler: OffenderHandler, private adminService: AdminService, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("addword", (msg, args) => this.addWord(msg, args), (msg) => Guard.isSeniorMod(msg));
-        registerCallback("rmword", (msg, args) => this.removeWord(msg, args), (msg) => Guard.isSeniorMod(msg));
+    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
+        registerCallback("addword", (msg, args) => this.addWord(msg, args), CommandType.Private, (msg) => Guard.isSeniorMod(msg));
+        registerCallback("rmword", (msg, args) => this.removeWord(msg, args), CommandType.Private, (msg) => Guard.isSeniorMod(msg));
 
         this.logger.info("Registered 2 commands.", MOD);
     }
