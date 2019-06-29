@@ -14,9 +14,15 @@ import { StatsService } from '../services/statsService';
 
 const MOD = "commandHandler.ts";
 
+interface ICommandDefinition {
+    trigger: string,
+    action: (msg?: Discord.Message, args?: string[]) => string | void,
+    preReq?: (msg: Discord.Message) => boolean
+};
+
 @singleton()
 export class CommandHandler {
-    private commandDefinitions = [];
+    private commandDefinitions: ICommandDefinition[] = [];
 
     constructor(private metricService: MetricService, 
         private adminService: AdminService, 
@@ -28,7 +34,10 @@ export class CommandHandler {
         private statsService: StatsService,
         private logger: Logger) {}
 
-    private registerCommand(trigger: string, action: Function, preReq?: (msg: Discord.Message) => boolean): void {
+    private registerCommand(
+        trigger: string, 
+        action: (msg?: Discord.Message, args?: string[]) => string | void, 
+        preReq?: (msg: Discord.Message) => boolean): void {
         var existingCommand = this.commandDefinitions.find((cmd) => cmd.trigger === trigger);
 
         if (existingCommand) {
@@ -92,7 +101,11 @@ export class CommandHandler {
         var preReqPassed = (!foundCommand.preReq);
         if (!preReqPassed) preReqPassed = foundCommand.preReq(msg);
 
-        if (preReqPassed) foundCommand.action(msg, args);
+        if (preReqPassed) {
+            var result = foundCommand.action(msg, args);
+
+            if (result) msg.reply(result);
+        }
 
         return true;
     }
