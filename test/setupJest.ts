@@ -6,6 +6,6 @@ var badWordsModel = {
     mute: []
 };
 
-fs.writeFile('./badwords.json', JSON.stringify(badWordsModel), (err) => {
+fs.writeFile('./src/badwords.json', JSON.stringify(badWordsModel), (err) => {
     if (err) throw err;
 });
