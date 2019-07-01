@@ -2,6 +2,7 @@ import {MetricService} from "./../../src/services/metricService";
 import {MetricHandler} from "./../../src/handlers/metricHandler";
 
 jest.mock('./../../src/handlers/metricHandler');
+jest.mock('./../../src/handlers/filterHandler');
 
 var instance: MetricService;
 
