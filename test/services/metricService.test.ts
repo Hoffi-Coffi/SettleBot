@@ -22,5 +22,5 @@ describe("getMetrics", () => {
         var result = instance.getMetrics();
 
         expect(result).toBe("I have seen 1 message and scanned a total of 2 words! Of those, I've found 1 filtered word. I've deleted 1 message. I've muted 1 person automatically, and 1 person on behalf of moderators.");
-    })
-})
+    });
+});

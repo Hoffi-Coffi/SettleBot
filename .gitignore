@@ -91,7 +91,7 @@ typings/
 auth.*.json
 rsns.json
 stats.json
-badwords.json
+badwords*.json
 config.json
 utilities/guard.js
 
