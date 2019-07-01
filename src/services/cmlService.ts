@@ -11,6 +11,7 @@ import Formatter from "../utilities/formatter";
 
 import moment from "moment";
 import Discord from "discord.js";
+import { CommandType } from "../handlers/commandHandler";
 
 const MOD = "cmlService.ts";
 
@@ -29,14 +30,14 @@ const skillMap = [
 export class CmlService {
     constructor(private cmlHandler: CmlHandler, private memberHandler: MemberHandler, private configService: ConfigService, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("update", (msg, args) => this.updatePlayer(msg, args));
-        registerCallback("sotw", (msg, args) => this.skillOfTheWeek(msg, args));
-        registerCallback("sotwlink", (msg) => this.link(msg));
-        registerCallback("newcomp", (msg, args) => this.stageNewSotw(msg, args), (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
-        registerCallback("abandon", (msg) => this.abandonSotw(msg), (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
-        registerCallback("confirm", (msg) => this.confirmSotw(msg), (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
-        registerCallback("updateall", (msg) => this.updateAll(msg), (msg) => Guard.isSeniorMod(msg));
+    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
+        registerCallback("update", (msg, args) => this.updatePlayer(msg, args), CommandType.Public);
+        registerCallback("sotw", (msg, args) => this.skillOfTheWeek(msg, args), CommandType.Public);
+        registerCallback("sotwlink", (msg) => this.link(msg), CommandType.Public);
+        registerCallback("newcomp", (msg, args) => this.stageNewSotw(msg, args), CommandType.Private, (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
+        registerCallback("abandon", (msg) => this.abandonSotw(msg), CommandType.Private, (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
+        registerCallback("confirm", (msg) => this.confirmSotw(msg), CommandType.Private, (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
+        registerCallback("updateall", (msg) => this.updateAll(msg), CommandType.Private, (msg) => Guard.isSeniorMod(msg));
 
         this.logger.info("Registered 7 commands.", MOD);
     }

@@ -6,6 +6,7 @@ import { Logger } from "../utilities/logger";
 import { MemberHandler } from "../handlers/memberHandler";
 import Formatter from "../utilities/formatter";
 import TableBuilder, { Table } from "../utilities/tableBuilder";
+import { CommandType } from "../handlers/commandHandler";
 
 const MOD = "statsService.ts";
 
@@ -15,8 +16,8 @@ export class StatsService {
         private memberHandler: MemberHandler, 
         private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("stats", (msg, args) => this.getPlayerStats(msg, args));
+    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
+        registerCallback("stats", (msg, args) => this.getPlayerStats(msg, args), CommandType.Public);
 
         this.logger.info("Registered 1 command.", MOD);
     }

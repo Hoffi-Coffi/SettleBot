@@ -14,10 +14,15 @@ import { StatsService } from '../services/statsService';
 
 const MOD = "commandHandler.ts";
 
+export enum CommandType {
+    Public, Private, All
+};
+
 interface ICommandDefinition {
     trigger: string,
     action: (msg?: Discord.Message, args?: string[]) => string | void,
     preReq?: (msg: Discord.Message) => boolean
+    type: CommandType
 };
 
 @singleton()
@@ -37,6 +42,7 @@ export class CommandHandler {
     private registerCommand(
         trigger: string, 
         action: (msg?: Discord.Message, args?: string[]) => string | void, 
+        commandType: CommandType,
         preReq?: (msg: Discord.Message) => boolean): void {
         var existingCommand = this.commandDefinitions.find((cmd) => cmd.trigger === trigger);
 
@@ -48,19 +54,20 @@ export class CommandHandler {
         this.commandDefinitions.push({
             trigger: trigger,
             action: action,
-            preReq: preReq
+            preReq: preReq,
+            type: commandType
         });
     }
 
     startup(): void {
-        this.metricService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
-        this.adminService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
-        this.memberService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
-        this.filterService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
-        this.cmlService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
-        this.configService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
-        this.helpService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
-        this.statsService.startup((trigger, action, preReq) => this.registerCommand(trigger, action, preReq));
+        this.metricService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
+        this.adminService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
+        this.memberService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
+        this.filterService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
+        this.cmlService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
+        this.configService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
+        this.helpService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
+        this.statsService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
 
         this.logger.info(`Command registration complete. Total commands: ${this.commandDefinitions.length}`, MOD);
     }
@@ -87,9 +94,9 @@ export class CommandHandler {
         this.helpService.setup(server.channels.find((chan) => chan.name === "rules"), sotwChannel);
     }
 
-    trigger(trigger: string, msg: Discord.Message, args: string[]): boolean {
-        this.logger.info(`Attempting to find handler for command "${trigger}"...`, MOD);
-        var foundCommand = this.commandDefinitions.find((cmd) => cmd.trigger === trigger);
+    trigger(trigger: string, msg: Discord.Message, args: string[], commandType: CommandType): boolean {
+        this.logger.info(`Attempting to find handler for ${commandType} command "${trigger}"...`, MOD);
+        var foundCommand = this.commandDefinitions.find((cmd) => cmd.trigger === trigger && (cmd.type === CommandType.All || cmd.type === commandType));
 
         if (!foundCommand) {
             this.logger.info("Command not found.", MOD);

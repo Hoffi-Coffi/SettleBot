@@ -16,7 +16,7 @@ var authProd = require('./auth.prod.json');
 //#endregion
 
 //#region Modules
-import {CommandHandler} from "./handlers/commandHandler";
+import {CommandHandler, CommandType} from "./handlers/commandHandler";
 import {FilterService} from "./services/filterService";
 
 var cmdHandler = container.resolve(CommandHandler);
@@ -55,9 +55,6 @@ bot.on('message', msg => {
     // If it's the bot speaking, don't do anything else.
     if (msg.author.tag === bot.user.tag) return;
 
-    // If it's in a DM, don't do anything else.
-    if (msg.channel.type === 'dm') return;
-
     var commandHandled = false;
 
     // Attempt to find a command first and foremost.
@@ -67,7 +64,10 @@ bot.on('message', msg => {
 
         args = args.splice(1);
 
-        commandHandled = cmdHandler.trigger(cmd, msg, args);
+        var type = CommandType.Public;
+        if (msg.channel.type === 'dm') type = CommandType.Private;
+
+        commandHandled = cmdHandler.trigger(cmd, msg, args, type);
     } 
     
     if (!commandHandled) {

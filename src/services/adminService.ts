@@ -7,6 +7,7 @@ import ServerUtils from "../utilities/serverUtils";
 
 import { MetricHandler, Metric } from "../handlers/metricHandler";
 import { MemberHandler } from "../handlers/memberHandler";
+import { CommandType } from "../handlers/commandHandler";
 
 const MOD = "adminService.ts";
 
@@ -18,10 +19,10 @@ export class AdminService {
 
     constructor(private metricHandler: MetricHandler, private memberHandler: MemberHandler, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("logout", (msg) => this.logout(msg), (msg) => Guard.isSeniorMod(msg));
-        registerCallback("unmute", (msg) => this.unmuteMember(msg), (msg) => Guard.isSeniorMod(msg));
-        registerCallback("mute", (msg) => this.muteMember(msg), (msg) => Guard.isMod(msg));
+    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
+        registerCallback("logout", (msg) => this.logout(msg), CommandType.Private, (msg) => Guard.isSeniorMod(msg));
+        registerCallback("unmute", (msg) => this.unmuteMember(msg), CommandType.Public, (msg) => Guard.isSeniorMod(msg));
+        registerCallback("mute", (msg) => this.muteMember(msg), CommandType.Public, (msg) => Guard.isMod(msg));
 
         this.logger.info("Registered 3 commands.", MOD);
     }

@@ -5,6 +5,7 @@ import {MetricHandler, Metric} from '../handlers/metricHandler';
 
 import { injectable } from 'tsyringe';
 import Discord from 'discord.js';
+import { CommandType } from '../handlers/commandHandler';
 
 const MOD = "metricService.ts";
 
@@ -12,9 +13,9 @@ const MOD = "metricService.ts";
 export class MetricService {
     constructor(private handler: MetricHandler, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg?: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("metrics", () => this.getMetrics(), (msg) => Guard.isMod(msg));
-        registerCallback("uptime", () => this.uptime(), (msg) => Guard.isMod(msg));
+    startup(registerCallback: (trigger: string, action: (msg?: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
+        registerCallback("metrics", () => this.getMetrics(), CommandType.Public, (msg) => Guard.isMod(msg));
+        registerCallback("uptime", () => this.uptime(), CommandType.Public, (msg) => Guard.isMod(msg));
 
         this.logger.info("Registered 2 commands.", MOD);
     }

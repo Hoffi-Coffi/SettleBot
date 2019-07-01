@@ -7,6 +7,7 @@ import { CmlHandler } from '../handlers/cmlHandler';
 import { Logger } from '../utilities/logger';
 import ServerUtils from '../utilities/serverUtils';
 import Formatter from '../utilities/formatter';
+import { CommandType } from '../handlers/commandHandler';
 
 const MOD = "memberService.ts";
 
@@ -16,9 +17,9 @@ export class MemberService {
 
     constructor(private memberHandler: MemberHandler, private cmlHandler: CmlHandler, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("register", (msg, args) => this.registerMember(msg, args));
-        registerCallback("check", (msg) => this.checkMember(msg));
+    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
+        registerCallback("register", (msg, args) => this.registerMember(msg, args), CommandType.Public);
+        registerCallback("check", (msg) => this.checkMember(msg), CommandType.Public);
 
         this.logger.info("Registered 2 commands.", MOD);
     }

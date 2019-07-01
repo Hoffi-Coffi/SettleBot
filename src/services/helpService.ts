@@ -3,6 +3,7 @@ import Discord from "discord.js";
 
 import { Logger } from "../utilities/logger";
 import ServerUtils from "../utilities/serverUtils";
+import { CommandType } from "../handlers/commandHandler";
 
 const MOD = "helpService.ts";
 
@@ -13,8 +14,8 @@ export class HelpService {
 
     constructor(private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("help", (msg) => this.help(msg));
+    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
+        registerCallback("help", (msg) => this.help(msg), CommandType.All);
 
         this.logger.info("Registered 1 command.", MOD);
     }
@@ -25,7 +26,7 @@ export class HelpService {
     }
 
     private help(msg?: Discord.Message): void {
-        var memb = (msg) ? msg.guild.member(msg.author) : "there";
+        var memb = (msg && msg.guild) ? msg.guild.member(msg.author) : "there";
         var response = `Hi ${memb}! I'm SettleBot.\n\n`;
         response += "At the moment, I'm responsible for making sure the Settlement Discord server stays wholesome. ";
         
@@ -48,6 +49,7 @@ export class HelpService {
 
         response += "I do a few other things, but they're mostly in the background to support the server staff. However, I'm improving all the time, so watch this space!";
 
-        ServerUtils.directMessage(msg.guild.member(msg.author), response);
+        if (msg.channel.type === 'dm') msg.reply(response);
+        else ServerUtils.directMessage(msg.guild.member(msg.author), response);
     }
 }
