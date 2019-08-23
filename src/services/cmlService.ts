@@ -34,10 +34,10 @@ export class CmlService {
         registerCallback("update", (msg, args) => this.updatePlayer(msg, args), CommandType.Public);
         registerCallback("sotw", (msg, args) => this.skillOfTheWeek(msg, args), CommandType.Public);
         registerCallback("sotwlink", (msg) => this.link(msg), CommandType.Public);
-        registerCallback("newcomp", (msg, args) => this.stageNewSotw(msg, args), CommandType.Private, (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
-        registerCallback("abandon", (msg) => this.abandonSotw(msg), CommandType.Private, (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
-        registerCallback("confirm", (msg) => this.confirmSotw(msg), CommandType.Private, (msg) => Guard.isSeniorMod(msg) || Guard.isToucann(msg));
-        registerCallback("updateall", (msg) => this.updateAll(msg), CommandType.Private, (msg) => Guard.isSeniorMod(msg));
+        registerCallback("newcomp", (msg, args) => this.stageNewSotw(msg, args), CommandType.Private, (msg) => Guard.isSeniorModPriv(msg));
+        registerCallback("abandon", (msg) => this.abandonSotw(msg), CommandType.Private, (msg) => Guard.isSeniorModPriv(msg));
+        registerCallback("confirm", (msg) => this.confirmSotw(msg), CommandType.Private, (msg) => Guard.isSeniorModPriv(msg));
+        registerCallback("updateall", (msg) => this.updateAll(msg), CommandType.Private, (msg) => Guard.isSeniorModPriv(msg));
 
         this.logger.info("Registered 7 commands.", MOD);
     }

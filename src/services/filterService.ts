@@ -20,8 +20,8 @@ export class FilterService {
         private offenderHandler: OffenderHandler, private adminService: AdminService, private logger: Logger) {}
 
     startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("addword", (msg, args) => this.addWord(msg, args), CommandType.Private, (msg) => Guard.isSeniorMod(msg));
-        registerCallback("rmword", (msg, args) => this.removeWord(msg, args), CommandType.Private, (msg) => Guard.isSeniorMod(msg));
+        registerCallback("addword", (msg, args) => this.addWord(msg, args), CommandType.Private, (msg) => Guard.isSeniorModPriv(msg));
+        registerCallback("rmword", (msg, args) => this.removeWord(msg, args), CommandType.Private, (msg) => Guard.isSeniorModPriv(msg));
 
         this.logger.info("Registered 2 commands.", MOD);
     }

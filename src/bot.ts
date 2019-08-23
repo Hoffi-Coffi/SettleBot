@@ -38,6 +38,7 @@ bot.on('ready', () => {
     else logger.info("Running in PRODUCTION mode!", MOD);
 
     var server = bot.guilds.first();
+    Guard.setServer(server);
     logger.info(`Connected to server: ${server.name}`, MOD);
 
     // Ensure the bot doesn't connect to the live server in development mode.

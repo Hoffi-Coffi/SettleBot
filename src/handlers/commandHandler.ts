@@ -11,6 +11,7 @@ import { ConfigService } from '../services/configService';
 import { Logger } from '../utilities/logger';
 import { HelpService } from '../services/helpService';
 import { StatsService } from '../services/statsService';
+import { EventsService } from '../services/eventsService';
 
 const MOD = "commandHandler.ts";
 
@@ -37,6 +38,7 @@ export class CommandHandler {
         private configService: ConfigService, 
         private helpService: HelpService,
         private statsService: StatsService,
+        private eventsService: EventsService,
         private logger: Logger) {}
 
     private registerCommand(
@@ -60,14 +62,24 @@ export class CommandHandler {
     }
 
     startup(): void {
-        this.metricService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
-        this.adminService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
-        this.memberService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
-        this.filterService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
-        this.cmlService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
-        this.configService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
-        this.helpService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
-        this.statsService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
+        this.metricService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
+        this.adminService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
+        this.memberService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
+        this.filterService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
+        this.cmlService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
+        this.configService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
+        this.helpService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
+        this.statsService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
+        this.eventsService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
 
         this.logger.info(`Command registration complete. Total commands: ${this.commandDefinitions.length}`, MOD);
     }
@@ -95,7 +107,11 @@ export class CommandHandler {
     }
 
     trigger(trigger: string, msg: Discord.Message, args: string[], commandType: CommandType): boolean {
-        this.logger.info(`Attempting to find handler for ${commandType} command "${trigger}"...`, MOD);
+        var cmdType = "Generic";
+        if (commandType === CommandType.Private) cmdType = "Private";
+        else if (commandType === CommandType.Public) cmdType = "Public";
+        
+        this.logger.info(`Attempting to find handler for ${cmdType} command "${trigger}"...`, MOD);
         var foundCommand = this.commandDefinitions.find((cmd) => cmd.trigger === trigger && (cmd.type === CommandType.All || cmd.type === commandType));
 
         if (!foundCommand) {
@@ -107,6 +123,8 @@ export class CommandHandler {
 
         var preReqPassed = (!foundCommand.preReq);
         if (!preReqPassed) preReqPassed = foundCommand.preReq(msg);
+
+        this.logger.info(`Pre-req passed? ${(preReqPassed) ? "Yes" : "No"}`, MOD);
 
         if (preReqPassed) {
             var result = foundCommand.action(msg, args);

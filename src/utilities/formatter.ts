@@ -1,3 +1,6 @@
+import moment from 'moment';
+import pluralize from 'pluralize';
+
 export default class Formatter {
     static formatRSN(_rsn: string): string {
         if (!_rsn) return _rsn;
@@ -9,6 +12,21 @@ export default class Formatter {
         });
 
         return result.join(" ");
+    }
+
+    static humanizeDuration(duration: moment.Duration) {
+        const durationComponents = [
+            { value: duration.years(), unit: 'year' },
+            { value: duration.months(), unit: 'month' },
+            { value: duration.days(), unit: 'day' },
+            { value: duration.hours(), unit: 'hour' },
+            { value: duration.minutes(), unit: 'minute' }
+          ]
+          return durationComponents
+            .filter(({ value }) => value !== 0)
+            .slice(0, 3)
+            .map(({ unit, value }) => `${value} ${pluralize(unit, value)}`)
+            .join(', ');
     }
 
     static convertTime(time: string, ampm: string, appendZulu: boolean = true): string {

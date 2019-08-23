@@ -16,7 +16,13 @@ export class StatsService {
         private memberHandler: MemberHandler, 
         private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
+    startup(registerCallback: (trigger: string, 
+        action: (msg: Discord.Message, 
+            args?: string[]) => void, 
+            commandType: CommandType, 
+            preReq?: (msg: Discord.Message) 
+            => boolean) 
+        => void): void {
         registerCallback("stats", (msg, args) => this.getPlayerStats(msg, args), CommandType.Public);
 
         this.logger.info("Registered 1 command.", MOD);
