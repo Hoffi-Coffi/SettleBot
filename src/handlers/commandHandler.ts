@@ -13,6 +13,7 @@ import { HelpService } from '../services/helpService';
 import { StatsService } from '../services/statsService';
 import { EventsService } from '../services/eventsService';
 import { LuckyService } from '../services/luckyService';
+import { EventsService } from '../services/eventsService';
 
 const MOD = "commandHandler.ts";
 
@@ -41,6 +42,7 @@ export class CommandHandler {
         private statsService: StatsService,
         private eventsService: EventsService,
         private luckyService: LuckyService,
+        private eventsService: EventsService,
         private logger: Logger) {}
 
     private registerCommand(
