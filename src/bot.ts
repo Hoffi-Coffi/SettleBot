@@ -55,10 +55,15 @@ bot.on('message', msg => {
     // If it's the bot speaking, don't do anything else.
     if (msg.author.tag === bot.user.tag) return;
 
+    // Memes
+    if (msg.content === '73' || msg.content.indexOf(' 73') > -1 || msg.content.indexOf('boaty integer') > -1 || msg.content.indexOf("b0aty integer") > -1 || msg.content.indexOf('73 ') > -1 || msg.content.indexOf('613106980566859787') > -1) {
+        msg.react('613106980566859787');
+    }
+
     var commandHandled = false;
 
     // Attempt to find a command first and foremost.
-    if (msg.content.substring(0, 1) === '&') {
+    if (msg.content.substring(0, 1) === '!') {
         var args = msg.content.substring(1).split(' ');
         var cmd = args[0];
 

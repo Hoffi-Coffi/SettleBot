@@ -11,6 +11,7 @@ import { ConfigService } from '../services/configService';
 import { Logger } from '../utilities/logger';
 import { HelpService } from '../services/helpService';
 import { StatsService } from '../services/statsService';
+import { LuckyService } from '../services/luckyService';
 
 const MOD = "commandHandler.ts";
 
@@ -37,6 +38,7 @@ export class CommandHandler {
         private configService: ConfigService, 
         private helpService: HelpService,
         private statsService: StatsService,
+        private luckyService: LuckyService,
         private logger: Logger) {}
 
     private registerCommand(
@@ -68,6 +70,7 @@ export class CommandHandler {
         this.configService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
         this.helpService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
         this.statsService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
+        this.luckyService.startup((trigger, action, commandType, preReq) => this.registerCommand(trigger, action, commandType, preReq));
 
         this.logger.info(`Command registration complete. Total commands: ${this.commandDefinitions.length}`, MOD);
     }
