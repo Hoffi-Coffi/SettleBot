@@ -72,7 +72,7 @@ export class AdminService {
             .then(() => {
                 this.metricHandler.increment(Metric.MembersMutedManual);
                 ServerUtils.messageChannel(this.auditChannel, `${memb} has just muted ${mentionMemb}`);
-                ServerUtils.directMessage(mentionMemb, `Hi ${mentionMemb}, you were muted in the Settlement Discord server. To be unmuted, please DM a Settlement Defender or Admin.`)
+                ServerUtils.directMessage(mentionMemb, `Hi ${mentionMemb}, you were muted in the Settlement Discord server. To be unmuted, please DM a Mod or Admin.`)
             });
     }
 

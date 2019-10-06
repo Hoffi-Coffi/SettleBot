@@ -55,7 +55,7 @@ export class FilterService {
                                 .then(() => {
                                     this.metricHandler.increment(Metric.MembersMutedAuto);
                                     ServerUtils.messageChannel(this.adminService.getAuditChannel(), `${memb} was muted because they reached 4 infractions.`);
-                                    ServerUtils.directMessage(memb, `Hi ${memb}, you were muted in the Settlement Discord server for bad language. To be unmuted, please DM a Settlement Defender or Admin.`);
+                                    ServerUtils.directMessage(memb, `Hi ${memb}, you were muted in the Settlement Discord server for bad language. To be unmuted, please DM a Mod or Admin.`);
                                 })
                                 .catch((err) => {
                                     this.logger.warn(`Tried to mute ${memb} but couldn't. Reason: ${err}`, MOD);
@@ -74,7 +74,7 @@ export class FilterService {
                             .then(() => {
                                 this.metricHandler.increment(Metric.MembersMutedAuto);
                                 ServerUtils.messageChannel(this.adminService.getAuditChannel(), `${memb} was muted because they triggered the mutelist.`);
-                                ServerUtils.directMessage(memb, `Hi ${memb}, you were muted in the Settlement Discord server for bad language. To be unmuted, please DM a Settlement Defender or Admin.`);
+                                ServerUtils.directMessage(memb, `Hi ${memb}, you were muted in the Settlement Discord server for bad language. To be unmuted, please DM a Mod or Admin.`);
                             })
                             .catch((err) => {
                                 this.logger.warn(`Tried to mute ${memb} but couldn't. Reason: ${err}`, MOD);
