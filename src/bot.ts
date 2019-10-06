@@ -18,9 +18,11 @@ var authProd = require('./auth.prod.json');
 //#region Modules
 import {CommandHandler, CommandType} from "./handlers/commandHandler";
 import {FilterService} from "./services/filterService";
+import {EchoService} from "./services/echoService";
 
 var cmdHandler = container.resolve(CommandHandler);
 var filterService = container.resolve(FilterService);
+var echoService = container.resolve(EchoService);
 //#endregion
 
 const MOD = "bot.ts";
@@ -50,11 +52,15 @@ bot.on('ready', () => {
 
     cmdHandler.startup();
     cmdHandler.setup(bot);
+
+    echoService.setEchoChannel(server.channels.find(chan => chan.name === "mini-recs"));
 });
 
 bot.on('message', msg => {
     // If it's the bot speaking, don't do anything else.
     if (msg.author.tag === bot.user.tag) return;
+
+    if (echoService.handleMessage(msg)) return;
 
     // Memes
     if (msg.content === '73' || msg.content.indexOf(' 73') > -1 || msg.content.indexOf('boaty integer') > -1 || msg.content.indexOf("b0aty integer") > -1 || msg.content.indexOf('73 ') > -1 || msg.content.indexOf('613106980566859787') > -1) {
