@@ -7,7 +7,6 @@ Currently, SettleBot provides the following features;
     * Tiered response if a banned word is found - lesser words are automatically deleted and worse ones result in an automatic mute.
 * Ability to track infractions
     * Mutes users if they reach 4 infractions.
-* Allows for easy spoiler-chat setup. Deletes potential spoilers posted in channels that aren't designated as spoiler zones.
 * Offers the ability to run Skill-Of-The-Week competitions through Crystal Math Labs
     * Automatically assigns players an "Athlete" role to designate them as competitors
     * Pings that role when a new competition begins
@@ -19,12 +18,14 @@ Currently, SettleBot provides the following features;
 * Statistics!
 * A help command to familiarise new users with the bot's commands.
 * A stats command to look up players on the OSRS hiscores.
+* Event tracking and management
 
 ## Roadmap
 SettleBot is constantly evolving. The next features to add are;
-* Event tracking and management
+* Minigame leaderboards
 * Automatically update SOTW competitors based on certain rules to prevent XP hiding
 * More competition types (clue scrolls, loot trackers, boss kills, etc.)
+* More easter eggs
 
 ## Technology
 SettleBot is written in TypeScript and runs on Node. It's tested using Jest and ts-jest. SettleBot uses travis to continuously build and validate itself.
