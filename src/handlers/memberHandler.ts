@@ -44,21 +44,21 @@ export class MemberHandler {
 
             this.registeredNames.push(existing);
         }
+
+        this.save();
     }
 
     get(user: string): Member {
         return this.registeredNames.find(name => name.user === user);
     }
 
-    shutdown(callback: Function): void {
-        this.save(callback);
+    getByRsn(rsn: string): Member {
+        return this.registeredNames.find(name => name.rsn === rsn);
     }
 
-    save(callback: Function): void {
-        this.logger.info("Saving memberlist...", MOD);
+    private save(): void {
         fs.writeFile("./rsns.json", JSON.stringify(this.registeredNames), (err) => {
             if (err) this.logger.error(`Failed to update Memberlist file: ${err}`, MOD);
-            else if (callback) callback();
         });
     }
 };
