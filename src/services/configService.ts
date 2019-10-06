@@ -31,7 +31,7 @@ export class ConfigService {
     constructor(private memberService: MemberService, private cmlHandler: CmlHandler, private configHandler: ConfigHandler, private logger: Logger) {}
 
     startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("setconfig", (msg, args) => this.setConfig(msg, args), CommandType.Private, (msg) => Guard.isSeniorMod(msg));
+        registerCallback("setconfig", (msg, args) => this.setConfig(msg, args), CommandType.Private, (msg) => Guard.isSeniorModPriv(msg));
 
         this.logger.info("Registered 1 command.", MOD);
     }

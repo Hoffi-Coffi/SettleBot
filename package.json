@@ -18,10 +18,12 @@
     "dependencies": {
         "@types/cheerio": "^0.22.13",
         "@types/form-data": "^2.2.1",
+        "@types/pluralize": "0.0.29",
         "cheerio": "^1.0.0-rc.3",
         "discord.js": "^11.4.2",
         "form-data": "^2.5.1",
         "moment": "^2.24.0",
+        "pluralize": "^8.0.0",
         "reflect-metadata": "^0.1.13",
         "tsyringe": "^3.4.0",
         "winston": "^3.2.1"
