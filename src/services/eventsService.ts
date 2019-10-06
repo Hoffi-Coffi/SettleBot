@@ -24,9 +24,10 @@ export class EventsService {
             => boolean) 
         => void): void {
         registerCallback("events", (msg) => this.getEvents(msg), CommandType.Public);
-        registerCallback("reloadevents", (msg) => this.reloadEvents(msg), CommandType.Private, (msg) => Guard.isBotOwner(msg));
+        registerCallback("addevent", (msg, args) => this.addEvent(msg, args), CommandType.Public, (msg) => Guard.isAdmin(msg) && Guard.isAdminChan(msg));
+        registerCallback("reloadevents", (msg) => this.reloadEvents(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
 
-        this.logger.info("Registered 2 commands.", MOD);
+        this.logger.info("Registered 3 commands.", MOD);
     }
 
     reloadEvents(msg: Discord.Message): void {
@@ -34,6 +35,23 @@ export class EventsService {
             if (err) msg.reply(`Failed to reload events. Reason: ${err}`);
             else msg.reply("Reloaded events successfully.");
         });
+    }
+
+    addEvent(msg: Discord.Message, args: string[]): void {
+        if (args.length < 2) {
+            msg.reply("I didn't catch that. Command syntax: `&addevent <date/time> <event name>`.");
+            return;
+        }
+
+        var date = args[0];
+        args = args.splice(1);
+
+        this.handler.addEvent({
+            name: args.join(" "),
+            date: date
+        });
+
+        msg.reply(`added the event "${args.join(" ")}" to start in ${Formatter.humanizeDuration(moment.duration(moment(date).diff(moment())))}`);
     }
 
     getEvents(msg: Discord.Message): void {

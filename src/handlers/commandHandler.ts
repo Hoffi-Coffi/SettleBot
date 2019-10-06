@@ -104,10 +104,10 @@ export class CommandHandler {
         server.channels.find((channel) => channel.name === 'bot-log'),
         server.roles.find((role) => role.name === "Muted"));
 
-        var sotwChannel = server.channels.find((chan) => chan.name === "settlement_athletes");
-        this.memberService.setup(server.roles.find((role) => role.name === 'Athlete'));
+        var sotwChannel = server.channels.find((chan) => chan.name === "sotw-bot");
+        this.memberService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'));
         this.configService.setup(sotwChannel);
-        this.helpService.setup(server.channels.find((chan) => chan.name === "rules"), sotwChannel);
+        this.helpService.setup(server.channels.find((chan) => chan.name === "rules-and-info"), sotwChannel);
     }
 
     trigger(trigger: string, msg: Discord.Message, args: string[], commandType: CommandType): boolean {

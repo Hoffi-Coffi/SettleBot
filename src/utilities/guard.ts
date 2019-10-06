@@ -58,12 +58,12 @@ export default class Guard {
         return (memb && memb.hasPermission(Discord.Permissions.FLAGS.ADMINISTRATOR));
     }
 
-    static isBotOwner(msg: Discord.Message): boolean {
-        return (msg.author.username === "Hoffi Coffi" && msg.author.tag === "Hoffi Coffi#2536");
-    }
+    static isAdminChan(msg: Discord.Message): boolean {
+        var chan: Discord.TextChannel = <Discord.TextChannel>msg.channel;
 
-    static isToucann(msg: Discord.Message): boolean {
-        return (msg.author.username === "Toucann" && msg.author.tag === "Toucann#6889");
+        if (!chan) return false;
+
+        return chan.name === 'admin-chat';
     }
 
     static isDevMode(): boolean {

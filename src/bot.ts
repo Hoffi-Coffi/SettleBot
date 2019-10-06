@@ -42,7 +42,7 @@ bot.on('ready', () => {
     logger.info(`Connected to server: ${server.name}`, MOD);
 
     // Ensure the bot doesn't connect to the live server in development mode.
-    if (Guard.isDevMode() && server.name !== "D'win Hoffi Coffi") {
+    if (Guard.isDevMode() && server.name !== "test") {
         logger.warn("Tried to run in dev mode on a live server. Quitting...", MOD);
         bot.destroy();
         return;
@@ -64,7 +64,7 @@ bot.on('message', msg => {
     var commandHandled = false;
 
     // Attempt to find a command first and foremost.
-    if (msg.content.substring(0, 1) === '!') {
+    if (msg.content.substring(0, 1) === '&') {
         var args = msg.content.substring(1).split(' ');
         var cmd = args[0];
 

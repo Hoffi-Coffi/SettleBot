@@ -49,7 +49,7 @@ export class CmlService {
 
         search = getRSN;
 
-        if (Guard.isSeniorMod(msg) || Guard.isToucann(msg)) {
+        if (Guard.isSeniorMod(msg)) {
             if (args && args.length > 0) {
                 search = args.join("_");
             }
