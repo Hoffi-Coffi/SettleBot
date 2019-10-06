@@ -6,7 +6,6 @@ import Guard from "../utilities/guard";
 import ServerUtils from "../utilities/serverUtils";
 
 import { MetricHandler, Metric } from "../handlers/metricHandler";
-import { MemberHandler } from "../handlers/memberHandler";
 import { CommandType } from "../handlers/commandHandler";
 
 const MOD = "adminService.ts";
@@ -17,7 +16,7 @@ export class AdminService {
     private auditChannel: Discord.TextChannel;
     private muteRole: Discord.Role;
 
-    constructor(private metricHandler: MetricHandler, private memberHandler: MemberHandler, private logger: Logger) {}
+    constructor(private metricHandler: MetricHandler, private logger: Logger) {}
 
     startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
         registerCallback("logout", (msg) => this.logout(msg), CommandType.Private, (msg) => Guard.isSeniorModPriv(msg));
@@ -49,7 +48,7 @@ export class AdminService {
     
         if (!Guard.isDevMode()) ServerUtils.messageChannel(this.auditChannel, `Shutting down by request of ${msg.guild.member(msg.author)} :cry:`);
 
-        this.metricHandler.shutdown(() => this.memberHandler.shutdown(() => this.destroyFunc()));
+        this.metricHandler.shutdown(() => this.destroyFunc());
     }
 
     muteMember(msg: Discord.Message): void {

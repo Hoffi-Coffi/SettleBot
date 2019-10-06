@@ -8,6 +8,7 @@ import { Logger } from '../utilities/logger';
 import ServerUtils from '../utilities/serverUtils';
 import Formatter from '../utilities/formatter';
 import { CommandType } from '../handlers/commandHandler';
+import Guard from '../utilities/guard';
 
 const MOD = "memberService.ts";
 
@@ -20,8 +21,9 @@ export class MemberService {
     startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
         registerCallback("register", (msg, args) => this.registerMember(msg, args), CommandType.Public);
         registerCallback("check", (msg) => this.checkMember(msg), CommandType.Public);
+        registerCallback("whois", (msg, args) => this.whois(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
 
-        this.logger.info("Registered 2 commands.", MOD);
+        this.logger.info("Registered 3 commands.", MOD);
     }
 
     setup(_athleteRole: Discord.Role): void {
@@ -34,6 +36,23 @@ export class MemberService {
         return this.athleteRole;
     }
 
+    private whois(msg: Discord.Message, args: string[]): void {
+        if (args.length < 1) {
+            msg.reply("you need to provide an RSN.");
+            return;
+        }
+
+        var rsn = args.join("_");
+        var res = this.memberHandler.getByRsn(rsn);
+
+        if (res) {
+            msg.reply(`"${rsn}" belongs to Discord user "${res.user}"!`);
+            return;
+        }
+
+        msg.reply("I couldn't find that RSN.");
+    }
+
     private registerMember(msg: Discord.Message, args: string[]): void {
         if (args.length < 1) {
             msg.reply("you need to tell me your RSN. Try `&register <rsn>`!");
@@ -42,6 +61,10 @@ export class MemberService {
     
         var rsn = args.join("_");
         var reply = null;
+
+        // this.memberHandler.register(rsn, msg.author.username);
+
+        // msg.reply(`I've set your RSN to "${rsn}"`);
     
         var finalise = () => {
             this.memberHandler.register(rsn, msg.author.username);
