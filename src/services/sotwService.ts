@@ -54,6 +54,9 @@ export class SotwService {
         this.sotwChannel = <Discord.TextChannel>_sotwChannel;
         this.server = _server;
 
+        this.updateTopic();
+        this.setupTimeouts();
+
         if (!this.competitorRole) this.logger.warn("Couldn't find a competitor role.", MOD);
         if (!this.sotwChannel) this.logger.warn("Couldn't find a SOTW channel", MOD);
     }

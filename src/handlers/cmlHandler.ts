@@ -29,6 +29,10 @@ export class CmlHandler {
     constructor(private logger: Logger, private configHandler: ConfigHandler) {}
 
     getGroup(callback: (group: string, cmlErr?: string) => void): void {
+        //todo temp
+        if (callback) callback("26533");
+        return;
+
         var compId = this.configHandler.getSetting("sotwCompId");
 
         var url = groupURL + compId;
