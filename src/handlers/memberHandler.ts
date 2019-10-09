@@ -1,12 +1,14 @@
 import { singleton } from 'tsyringe';
 import { Logger } from '../utilities/logger';
 import * as fs from 'fs';
+import * as Discord from 'discord.js';
 
 const MOD = "memberHandler.ts";
 
-interface Member {
+export interface Member {
     rsn: string,
-    user: string
+    user: string,
+    id: string
 };
 
 @singleton()
@@ -30,13 +32,14 @@ export class MemberHandler {
         });
     }
 
-    register(rsn: string, user: string): void {
-        var existing = this.registeredNames.find(name => name.user === user);
+    register(rsn: string, user: string, id: string): void {
+        var existing = this.registeredNames.find(name => name.id === id);
 
         if (!existing) {
             this.registeredNames.push({
                 rsn: rsn,
-                user: user
+                user: user,
+                id: id
             });
         } else {
             this.registeredNames.splice(this.registeredNames.indexOf(existing), 1);
@@ -54,6 +57,10 @@ export class MemberHandler {
 
     getByRsn(rsn: string): Member {
         return this.registeredNames.find(name => name.rsn === rsn);
+    }
+
+    getById(id: string): Member {
+        return this.registeredNames.find(name => name.id === id);
     }
 
     private save(): void {

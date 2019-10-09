@@ -3,8 +3,6 @@ import { singleton } from "tsyringe";
 import { CmlHandler } from "../handlers/cmlHandler";
 import { MemberHandler } from "../handlers/memberHandler";
 
-import { ConfigService } from "./configService";
-
 import { Logger } from "../utilities/logger";
 import Guard from "../utilities/guard";
 import Formatter from "../utilities/formatter";
@@ -12,6 +10,8 @@ import Formatter from "../utilities/formatter";
 import moment from "moment";
 import Discord from "discord.js";
 import { CommandType } from "../handlers/commandHandler";
+import { SotwHandler } from "../handlers/sotwHandler";
+import { SotwService } from "./sotwService";
 
 const MOD = "cmlService.ts";
 
@@ -28,7 +28,11 @@ const skillMap = [
 
 @singleton()
 export class CmlService {
-    constructor(private cmlHandler: CmlHandler, private memberHandler: MemberHandler, private configService: ConfigService, private logger: Logger) {}
+    constructor(private cmlHandler: CmlHandler, 
+        private memberHandler: MemberHandler, 
+        private sotwHandler: SotwHandler,
+        private sotwService: SotwService,
+        private logger: Logger) {}
 
     startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
         registerCallback("update", (msg, args) => this.updatePlayer(msg, args), CommandType.Public);
@@ -76,7 +80,7 @@ export class CmlService {
     }
 
     private updateAll(msg: Discord.Message) {
-        msg.reply("on it. It may take a while, but I'll let you know when it's done.").then((reply: Discord.Message) => {
+        msg.reply("On it. It may take a while, but I'll let you know when it's done.").then((reply: Discord.Message) => {
             this.cmlHandler.getGroup((group, cmlErr) => {
                 if (!group && cmlErr) {
                     msg.reply(`CML says: "${cmlErr}"`);
@@ -151,33 +155,17 @@ export class CmlService {
 
         var skill = mappedSkill.skill;
 
-        this.logger.info("Getting group...");
-        this.cmlHandler.getGroup((group, cmlErr) => {
-            if (!group && cmlErr) {
-                msg.reply(`CML says: "${cmlErr}"`);
-                return;
-            }
+        this.logger.info("Staging SOTW data...");
+        this.cmlHandler.stageData(skill, this.sotwHandler.getCompetitors().map(comp => comp.rsn).join("\n"), (data) => {
+            var reply = "you're about to create a new SOTW with the following details:\n\n";
+            reply += `Competition Name: ${data.find((obj) => obj.name === "title").value}\n`;
+            reply += `Competition Start: Today at ${data.find((obj) => obj.name === "start_time").value} GMT\n`;
+            reply += `Competition End: ${moment(data.find((obj) => obj.name === "end_date").value).format('Do [of] MMMM')} at ${data.find((obj) => obj.name === "end_time").value} GMT\n`;
+            reply += `Skill: ${skill[0].toUpperCase() + skill.substring(1)}\n`;
+            reply += `Players: ${data.find((obj) => obj.name === "players").value.split('\n').length}\n\n`;
+            reply += "Do you wish to proceed? Use `&confirm` or `&abandon`.";
 
-            this.logger.info(`Found group ${group}. Getting userlist...`);
-            this.cmlHandler.getUserList(group, (playerList, cmlErr) => {
-                if (!playerList && cmlErr) {
-                    msg.reply(`CML had this to say: "${cmlErr}"`);
-                    return;
-                }
-
-                this.logger.info("Found user list. Staging data...");
-                this.cmlHandler.stageData(skill, (data) => {
-                    var reply = "you're about to create a new SOTW with the following details:\n\n";
-                    reply += `Competition Name: ${data.find((obj) => obj.name === "title").value}\n`;
-                    reply += `Competition Start: Today at ${data.find((obj) => obj.name === "start_time").value} GMT\n`;
-                    reply += `Competition End: ${moment(data.find((obj) => obj.name === "end_date").value).format('Do [of] MMMM')} at ${data.find((obj) => obj.name === "end_time").value} GMT\n`;
-                    reply += `Skill: ${skill[0].toUpperCase() + skill.substring(1)}\n`;
-                    reply += `Players: ${data.find((obj) => obj.name === "players").value.split('\n').length - 1}\n\n`;
-                    reply += "Do you wish to proceed? Use `&confirm` or `&abandon`.";
-
-                    msg.reply(reply);
-                });
-            });
+            msg.reply(reply);
         });
     }
 
@@ -189,9 +177,9 @@ export class CmlService {
         this.cmlHandler.createNewComp((compId, data) => {
             var datetime = `${data.find((obj) => obj.name === "start_date").value}T${data.find((obj) => obj.name === "start_time").value}Z`;
     
-            this.configService.updateSotw(datetime, compId);
+            this.sotwService.updateSotw(datetime, compId);
     
-            msg.reply("competition set-up successfully. I'll ping the Athletes when the competition begins.");
+            msg.reply("Competition set-up successfully. I'll ping the competitors when the competition begins.");
         });
     }
 };

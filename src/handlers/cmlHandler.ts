@@ -29,6 +29,10 @@ export class CmlHandler {
     constructor(private logger: Logger, private configHandler: ConfigHandler) {}
 
     getGroup(callback: (group: string, cmlErr?: string) => void): void {
+        //todo temp
+        if (callback) callback("26533");
+        return;
+
         var compId = this.configHandler.getSetting("sotwCompId");
 
         var url = groupURL + compId;
@@ -80,14 +84,12 @@ export class CmlHandler {
         });
     }
 
-    stageData(skill: string, callback: Function): void {
+    stageData(skill: string, competitors: string, callback: Function): void {
         this.queuedData = [];
-
-        var compNumber = parseInt(this.configHandler.getSetting("sotwCompNum")) + 1;
 
         this.queuedData.push({
             name: "title",
-            value: "Settlement SOTW #" + compNumber
+            value: `The Grotto's ${skill[0].toUpperCase() + skill.substring(1)} SOTW`
         });
 
         var now = new Date();
@@ -123,7 +125,7 @@ export class CmlHandler {
 
         this.queuedData.push({
             name: "players",
-            value: this.playerList
+            value: competitors
         });
 
         this.queuedData.push({
@@ -140,19 +142,18 @@ export class CmlHandler {
     }
 
     abandonComp(callback: Function): void {
-        if (!this.playerList && this.queuedData.length < 1) {
+        if (this.queuedData.length < 1) {
             callback("no competition is currently pending.");
             return;
         }
-    
-        this.playerList = undefined;
+
         this.queuedData = [];
     
         callback("done!");
     }
 
     createNewComp(callback: Function): void {
-        if (!this.playerList || this.queuedData.length < 1) return; //todo handle better
+        if (this.queuedData.length < 1) return; //todo handle better
 
         var form = new FormData();
 
@@ -376,10 +377,18 @@ export class CmlHandler {
     }
 
     sotwlink(): string {
-        return siteBaseURL + this.configHandler.getSetting("sotwCompId");
+        var compId = this.configHandler.getSetting("sotwCompId");
+        if (compId) return siteBaseURL + this.configHandler.getSetting("sotwCompId");
+        else return "there isn't a competition set up at the moment.";
     }
 
-    sotw(callback: (msg: string) => void, limitTop: number = 5, search?: string) {
+    sotw(callback: (msg: string) => void, limitTop: number = 5, search?: string): void {
+        var compId = this.configHandler.getSetting("sotwCompId");
+        if (!compId) {
+            callback("There's no competition running at the moment!");
+            return;
+        }
+
         this.getData((data) => {
             var sotwEnd = moment(this.configHandler.getSetting("sotwEnd"));
             var endWord = (sotwEnd.isBefore(moment())) ? "Ended" : "Ends";

@@ -13,6 +13,7 @@ import { HelpService } from '../services/helpService';
 import { StatsService } from '../services/statsService';
 import { EventsService } from '../services/eventsService';
 import { LuckyService } from '../services/luckyService';
+import { SotwService } from '../services/sotwService';
 
 const MOD = "commandHandler.ts";
 
@@ -41,6 +42,7 @@ export class CommandHandler {
         private statsService: StatsService,
         private eventsService: EventsService,
         private luckyService: LuckyService,
+        private sotwService: SotwService,
         private logger: Logger) {}
 
     private registerCommand(
@@ -84,6 +86,8 @@ export class CommandHandler {
             this.registerCommand(trigger, action, commandType, preReq));
         this.luckyService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
+        this.sotwService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
 
         this.logger.info(`Command registration complete. Total commands: ${this.commandDefinitions.length}`, MOD);
     }
@@ -106,7 +110,7 @@ export class CommandHandler {
 
         var sotwChannel = server.channels.find((chan) => chan.name === "sotw-bot");
         this.memberService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'));
-        this.configService.setup(sotwChannel);
+        this.sotwService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'), sotwChannel, server);
         this.helpService.setup(server.channels.find((chan) => chan.name === "rules-and-info"), sotwChannel);
     }
 
