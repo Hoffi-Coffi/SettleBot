@@ -21,6 +21,12 @@ export default class ServerUtils {
         memb.removeRole(role, reason);
     }
 
+    static emptyRole(role: Discord.Role): void {
+        role.members.forEach(memb => {
+            this.removeRole(memb, role, "Emptying the role.");
+        });
+    }
+
     static messageChannel(channel: Discord.TextChannel, message: string) {
         channel.send(message)
             .catch(err => {

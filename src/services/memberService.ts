@@ -55,40 +55,47 @@ export class MemberService {
 
     private registerMember(msg: Discord.Message, args: string[]): void {
         if (args.length < 1) {
+            var existing = this.memberHandler.getById(msg.author.id);
+
+            if (existing) {
+                msg.reply(`you're registered with me with RSN \`${Formatter.formatRSN(existing.rsn)}\`!`);
+                return;
+            }
+
             msg.reply("you need to tell me your RSN. Try `&register <rsn>`!");
             return;
         }
     
         var rsn = args.join("_");
-        var reply = null;
+        // var reply = null;
 
-        // this.memberHandler.register(rsn, msg.author.username);
+        this.memberHandler.register(rsn, msg.author.username, msg.author.id);
 
-        // msg.reply(`I've set your RSN to "${rsn}"`);
+        msg.reply(`I've set your RSN to "${Formatter.formatRSN(rsn)}"`);
     
-        var finalise = () => {
-            this.memberHandler.register(rsn, msg.author.username);
+        // var finalise = () => {
+        //     this.memberHandler.register(rsn, msg.author.username);
     
-            ServerUtils.addRoleToUser(msg.guild.member(msg.author), this.athleteRole);
+        //     ServerUtils.addRoleToUser(msg.guild.member(msg.author), this.athleteRole);
     
-            this.cmlHandler.updatePlayer(rsn, () => {
-                reply.delete();
+        //     this.cmlHandler.updatePlayer(rsn, () => {
+        //         reply.delete();
     
-                msg.reply("I've added you to my memberlist.");
-            });
-        }
+        //         msg.reply("I've added you to my memberlist.");
+        //     });
+        // }
     
-        msg.reply("just a second...")
-            .then((_reply) => {
-                reply = _reply;
-                this.cmlHandler.getGroup((group) => {
-                    this.cmlHandler.getUserList(group, (playerList: string) => {
-                        if (playerList && playerList.toLowerCase().indexOf(rsn.toLowerCase()) < 0) {
-                            this.cmlHandler.addPlayer(rsn.toLowerCase(), group, finalise);
-                        } else finalise();
-                    });
-                });
-        });
+        // msg.reply("just a second...")
+        //     .then((_reply) => {
+        //         reply = _reply;
+        //         this.cmlHandler.getGroup((group) => {
+        //             this.cmlHandler.getUserList(group, (playerList: string) => {
+        //                 if (playerList && playerList.toLowerCase().indexOf(rsn.toLowerCase()) < 0) {
+        //                     this.cmlHandler.addPlayer(rsn.toLowerCase(), group, finalise);
+        //                 } else finalise();
+        //             });
+        //         });
+        // });
     }
 
     private checkMember(msg: Discord.Message): void {

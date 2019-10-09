@@ -60,7 +60,10 @@ export class ConfigHandler {
                     return obj.startsWith(name);
                 });
         
-                if (!setting) return;
+                if (!setting) {
+                    model.config.push(`${name}:${value}`);
+                    return;
+                }
         
                 var idx = model.config.indexOf(setting);
                 if (idx > -1) {

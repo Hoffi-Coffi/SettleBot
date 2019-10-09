@@ -66,6 +66,14 @@ export default class Guard {
         return chan.name === 'admin-chat';
     }
 
+    static isSotwChan(msg: Discord.Message): boolean {
+        var chan: Discord.TextChannel = <Discord.TextChannel>msg.channel;
+
+        if (!chan) return false;
+
+        return chan.name === 'sotw-bot';
+    }
+
     static isDevMode(): boolean {
         return this.devMode;
     }
