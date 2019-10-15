@@ -5,7 +5,7 @@ export default class Formatter {
     static formatRSN(_rsn: string): string {
         if (!_rsn) return _rsn;
 
-        var split = _rsn.split("_");
+        var split = _rsn.toLowerCase().split("_");
         var result = [];
         split.forEach((val) => {
             result.push(val[0].toUpperCase() + val.substring(1));

@@ -1,0 +1,147 @@
+{
+    "skill": "agility",
+    "dateStart": "2019-10-09T19:00Z",
+    "dateEnd": "2019-10-16T19:00Z",
+    "competitors": [
+      {
+        "rsn": "Sombra",
+        "startExp": 2154773,
+        "endExp": 757652
+      },
+      {
+        "rsn": "Boo_Dude5",
+        "startExp": 288133,
+        "endExp": 757652
+      },
+      {
+        "rsn": "Swamplitecs",
+        "startExp": 2103579,
+        "endExp": 4604483
+      },
+      {
+        "rsn": "Imp_Action",
+        "startExp": 1214364,
+        "endExp": 1214433
+      },
+      {
+        "rsn": "Seris64",
+        "startExp": 1274735,
+        "endExp": 1276342
+      },
+      {
+        "rsn": "Error_Occurd",
+        "startExp": 13036765,
+        "endExp": 13143185
+      },
+      {
+        "rsn": "Hoffi_Coffi",
+        "startExp": 757652,
+        "endExp": 757710
+      },
+      {
+        "rsn": "Megadwarf47",
+        "startExp": 1200999,
+        "endExp": 1210439
+      },
+      {
+        "rsn": "Peebchochman",
+        "startExp": 3474610,
+        "endExp": 3509710
+      },
+      {
+        "rsn": "W_Virginia",
+        "startExp": 4494701,
+        "endExp": 4494807
+      },
+      {
+        "rsn": "Luxetrixx",
+        "startExp": 202501,
+        "endExp": 205385
+      },
+      {
+        "rsn": "Solemn_Sloth",
+        "startExp": 788371,
+        "endExp": 1414276
+      },
+      {
+        "rsn": "Beivu",
+        "startExp": 4618945,
+        "endExp": 5201335
+      },
+      {
+        "rsn": "Big_Dad_Dunk",
+        "startExp": 1035979,
+        "endExp": 1713349
+      },
+      {
+        "rsn": "Tobycantbank",
+        "startExp": 1992332,
+        "endExp": 4281750
+      },
+      {
+        "rsn": "Fabik2020",
+        "startExp": 921569,
+        "endExp": 1031112
+      },
+      {
+        "rsn": "Swampfan",
+        "startExp": 2446222,
+        "endExp": 2715202
+      },
+      {
+        "rsn": "Shepppey",
+        "startExp": 502660,
+        "endExp": 516727
+      },
+      {
+        "rsn": "Uim_Xav",
+        "startExp": 334173,
+        "endExp": 707328
+      },
+      {
+        "rsn": "Fly_Fin",
+        "startExp": 2081457,
+        "endExp": 2092611
+      },
+      {
+        "rsn": "Bsavs",
+        "startExp": 3887854,
+        "endExp": 3888806
+      },
+      {
+        "rsn": "Divano3",
+        "startExp": 534877,
+        "endExp": 1950131
+      },
+      {
+        "rsn": "Ahrims_Blood",
+        "startExp": 858308,
+        "endExp": 858308
+      },
+      {
+        "rsn": "Bestie_Kim",
+        "startExp": 353163,
+        "endExp": 353163
+      },
+      {
+        "rsn": "Engineerical",
+        "startExp": 3373992,
+        "endExp": 3373992
+      },
+      {
+        "rsn": "Mmmmicrowave",
+        "startExp": 870757,
+        "endExp": 870757
+      },
+      {
+        "rsn": "Personalshep",
+        "startExp": 1076348,
+        "endExp": 1076348
+      },
+      {
+        "rsn": "Uim_Chunky",
+        "startExp": 209346,
+        "endExp": 209346
+      }
+    ]
+  }

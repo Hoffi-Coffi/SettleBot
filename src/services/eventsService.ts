@@ -2,13 +2,13 @@ import Discord from "discord.js";
 import { injectable } from "tsyringe";
 
 import { Logger } from "../utilities/logger";
-import { CommandType } from "../handlers/commandHandler";
 import { EventsHandler } from "../handlers/eventsHandler";
 
 import moment from 'moment';
 import TableBuilder, { Table } from "../utilities/tableBuilder";
 import Formatter from "../utilities/formatter";
 import Guard from "../utilities/guard";
+import { CommandType } from "../utilities/models";
 
 const MOD = "eventsService.ts";
 

@@ -1,15 +1,9 @@
 import { singleton } from 'tsyringe';
 import { Logger } from '../utilities/logger';
 import * as fs from 'fs';
-import * as Discord from 'discord.js';
+import { Member } from '../utilities/models';
 
 const MOD = "memberHandler.ts";
-
-export interface Member {
-    rsn: string,
-    user: string,
-    id: string
-};
 
 @singleton()
 export class MemberHandler {

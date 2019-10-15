@@ -16,9 +16,10 @@ var authProd = require('./auth.prod.json');
 //#endregion
 
 //#region Modules
-import {CommandHandler, CommandType} from "./handlers/commandHandler";
+import {CommandHandler} from "./handlers/commandHandler";
 import {FilterService} from "./services/filterService";
 import {EchoService} from "./services/echoService";
+import { CommandType } from './utilities/models';
 
 var cmdHandler = container.resolve(CommandHandler);
 var filterService = container.resolve(FilterService);

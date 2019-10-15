@@ -2,7 +2,7 @@ import { injectable } from 'tsyringe';
 import Discord from "discord.js";
 
 import { FilterHandler } from '../handlers/filterHandler';
-import { MetricHandler, Metric } from '../handlers/metricHandler';
+import { MetricHandler } from '../handlers/metricHandler';
 import { OffenderHandler } from '../handlers/offenderHandler';
 
 import { AdminService } from './adminService';
@@ -10,7 +10,7 @@ import { AdminService } from './adminService';
 import { Logger } from '../utilities/logger';
 import ServerUtils from "../utilities/serverUtils";
 import Guard from "../utilities/guard";
-import { CommandType } from '../handlers/commandHandler';
+import { CommandType, Metric } from '../utilities/models';
 
 const MOD = "filterService.ts";
 

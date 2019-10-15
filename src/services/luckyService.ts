@@ -2,7 +2,7 @@ import { injectable } from "tsyringe";
 import * as Discord from "discord.js";
 
 import { Logger } from "../utilities/logger";
-import { CommandType } from "../handlers/commandHandler";
+import { CommandType } from "../utilities/models";
 
 const MOD = "luckyService.ts";
 

@@ -5,8 +5,8 @@ import { Logger } from "../utilities/logger";
 import Guard from "../utilities/guard";
 import ServerUtils from "../utilities/serverUtils";
 
-import { MetricHandler, Metric } from "../handlers/metricHandler";
-import { CommandType } from "../handlers/commandHandler";
+import { MetricHandler } from "../handlers/metricHandler";
+import { CommandType, Metric } from "../utilities/models";
 
 const MOD = "adminService.ts";
 

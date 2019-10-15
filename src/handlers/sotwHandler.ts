@@ -1,61 +1,89 @@
 import { singleton } from "tsyringe";
+import { SotwCompetition, SotwCompetitor } from "../utilities/models";
 import { Logger } from "../utilities/logger";
-import { Member } from "./memberHandler";
 import * as fs from "fs";
 
 const MOD = "sotwHandler.ts";
 
 @singleton()
 export class SotwHandler {
-    private competitors: Member[] = [];
+    private competition: SotwCompetition;
+    private stagedCompetition: SotwCompetition;
 
     constructor(private logger: Logger) {
-        this.loadSotwCompetitors();
+        this.loadCompetition();
     }
 
-    loadSotwCompetitors(): void {
-        this.competitors = [];
-        fs.readFile("./competitors.json", (err, data) => {
+    loadCompetition(): void {
+        this.competition = null;
+
+        fs.readFile("./sotw.json", (err, data) => {
             if (err) {
-                this.logger.error(`Failed to read competitors: ${err}`, MOD);
+                this.logger.error(`Failed to read competition: ${err}`, MOD);
                 return;
             }
 
-            var model = JSON.parse(data.toString());
+            this.competition = JSON.parse(data.toString());
 
-            if (!model) {
-                this.logger.warn("Couldn't find any competitors.", MOD);
+            if (!this.competition) {
+                this.logger.warn("Couldn't find a competition.", MOD);
                 return;
             }
 
-            model.forEach((obj: Member) => this.competitors.push(obj));
-
-            this.logger.info("Competitors loaded", MOD);
+            this.logger.info("Competition loaded", MOD);
         });
     }
 
-    addCompetitor(competitor: Member): boolean {
-        if (this.competitors.indexOf(competitor) > -1) return false;
+    getActiveComp(): SotwCompetition {
+        return this.competition;
+    }
 
-        this.competitors.push(competitor);
+    getStagedComp(): SotwCompetition {
+        return this.stagedCompetition;
+    }
 
-        this.saveCompetitors();
+    abandonStagedComp(): boolean {
+        if (!this.stagedCompetition) return false;
+
+        this.stagedCompetition = null;
         return true;
     }
 
-    clearCompetitors(): void {
-        this.competitors = [];
-
-        this.saveCompetitors();
+    stageNewComp(comp: SotwCompetition): void {
+        this.stagedCompetition = comp;
     }
 
-    getCompetitors(): Member[] {
-        return this.competitors;
+    activateStagedComp(): boolean {
+        if (!this.stagedCompetition) return false;
+
+        this.competition = this.stagedCompetition;
+        this.stagedCompetition = null;
+
+        this.saveCompetition();
+        return true;
     }
 
-    private saveCompetitors(): void {
-        fs.writeFile("./competitors.json", JSON.stringify(this.competitors), (err) => {
-            if (err) this.logger.error(`Failed to save events: ${err}`, MOD);
+    addOrUpdateCompetitor(competitor: SotwCompetitor): void {
+        var search = this.competition.competitors.find((obj) => obj.rsn === competitor.rsn);
+
+        if (search) {
+            this.competition.competitors.splice(this.competition.competitors.indexOf(search), 1);
+            
+            this.competition.competitors.push(competitor);
+        } else {
+            this.competition.competitors.push(competitor);
+        }
+
+        this.saveCompetition();
+    }
+
+    addStagedCompetitor(competitor: SotwCompetitor): void {
+        this.stagedCompetition.competitors.push(competitor);
+    }
+
+    private saveCompetition(): void {
+        fs.writeFile("./sotw.json", JSON.stringify(this.competition), (err) => {
+            if (err) this.logger.error(`Failed to save competition: ${err}`, MOD);
         });
     }
 }

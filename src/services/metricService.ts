@@ -1,11 +1,11 @@
 import {Logger} from '../utilities/logger';
 import Guard from '../utilities/guard';
 
-import {MetricHandler, Metric} from '../handlers/metricHandler';
+import {MetricHandler} from '../handlers/metricHandler';
 
 import { injectable } from 'tsyringe';
 import Discord from 'discord.js';
-import { CommandType } from '../handlers/commandHandler';
+import { CommandType, Metric } from '../utilities/models';
 
 const MOD = "metricService.ts";
 
