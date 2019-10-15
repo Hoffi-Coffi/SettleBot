@@ -3,7 +3,7 @@ import { SotwCompetition, SotwCompetitor } from "../utilities/models";
 import { Logger } from "../utilities/logger";
 import * as fs from "fs";
 
-const MOD = "stowHandler.ts";
+const MOD = "sotwHandler.ts";
 
 @singleton()
 export class SotwHandler {
