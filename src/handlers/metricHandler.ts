@@ -3,22 +3,9 @@ import {Logger} from '../utilities/logger';
 import {singleton} from 'tsyringe';
 import * as fs from 'fs';
 import moment from 'moment';
+import { IMetric, Metric } from '../utilities/models';
 
 const MOD = "metricHandler.ts";
-
-export interface IMetric {
-    name: Metric;
-    count: number;
-}
-
-export enum Metric {
-    MessagesSeen = "messagesseen",
-    WordsScanned = "wordsscanned",
-    BadWordsFound = "badwordsfound",
-    DeletedMessages = "deletedmessages",
-    MembersMutedAuto = "membersmutedauto",
-    MembersMutedManual = "membersmutedmanual"
-};
 
 @singleton()
 export class MetricHandler {

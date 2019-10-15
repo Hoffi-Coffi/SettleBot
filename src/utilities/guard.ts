@@ -5,6 +5,8 @@ export default class Guard {
     private static server: Discord.Guild;
 
     static isMod(msg: Discord.Message): boolean {
+        if (msg.channel.type !== "text") return false;
+
         var memb = msg.guild.member(msg.author);
 
         return this.modPermCheck(memb);
@@ -23,6 +25,8 @@ export default class Guard {
     }
 
     static isSeniorMod(msg: Discord.Message): boolean {
+        if (msg.channel.type !== "text") return false;
+
         var memb = msg.guild.member(msg.author);
 
         return this.seniorModPermCheck(memb);
@@ -41,6 +45,8 @@ export default class Guard {
     }
 
     static isAdmin(msg: Discord.Message): boolean {
+        if (msg.channel.type !== "text") return false;
+
         var memb = msg.guild.member(msg.author);
 
         return this.adminPermCheck(memb);

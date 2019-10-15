@@ -5,7 +5,6 @@ import { MetricService } from '../services/metricService';
 import { AdminService } from '../services/adminService';
 import { MemberService } from '../services/memberService';
 import { FilterService } from '../services/filterService';
-import { CmlService } from '../services/cmlService';
 import { ConfigService } from '../services/configService';
 
 import { Logger } from '../utilities/logger';
@@ -13,13 +12,10 @@ import { HelpService } from '../services/helpService';
 import { StatsService } from '../services/statsService';
 import { EventsService } from '../services/eventsService';
 import { LuckyService } from '../services/luckyService';
-import { SotwService } from '../services/sotwService';
+import { SotwAdminService } from '../services/sotwAdminService';
+import { CommandType } from '../utilities/models';
 
 const MOD = "commandHandler.ts";
-
-export enum CommandType {
-    Public, Private, All
-};
 
 interface ICommandDefinition {
     trigger: string,
@@ -36,13 +32,12 @@ export class CommandHandler {
         private adminService: AdminService, 
         private memberService: MemberService, 
         private filterService: FilterService,
-        private cmlService: CmlService, 
         private configService: ConfigService, 
         private helpService: HelpService,
         private statsService: StatsService,
         private eventsService: EventsService,
         private luckyService: LuckyService,
-        private sotwService: SotwService,
+        private sotwAdminService: SotwAdminService,
         private logger: Logger) {}
 
     private registerCommand(
@@ -74,8 +69,6 @@ export class CommandHandler {
             this.registerCommand(trigger, action, commandType, preReq));
         this.filterService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
-        this.cmlService.startup((trigger, action, commandType, preReq) => 
-            this.registerCommand(trigger, action, commandType, preReq));
         this.configService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
         this.helpService.startup((trigger, action, commandType, preReq) => 
@@ -86,7 +79,7 @@ export class CommandHandler {
             this.registerCommand(trigger, action, commandType, preReq));
         this.luckyService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
-        this.sotwService.startup((trigger, action, commandType, preReq) => 
+        this.sotwAdminService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
 
         this.logger.info(`Command registration complete. Total commands: ${this.commandDefinitions.length}`, MOD);
@@ -110,7 +103,7 @@ export class CommandHandler {
 
         var sotwChannel = server.channels.find((chan) => chan.name === "sotw-bot");
         this.memberService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'));
-        this.sotwService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'), sotwChannel, server);
+        this.sotwAdminService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'), sotwChannel, server);
         this.helpService.setup(server.channels.find((chan) => chan.name === "rules-and-info"), sotwChannel);
     }
 

@@ -2,13 +2,9 @@ import { singleton } from "tsyringe";
 import { Logger } from "../utilities/logger";
 import * as fs from "fs";
 import moment from "moment";
+import { IEvent } from "../utilities/models";
 
 const MOD = "eventsHandler.ts";
-
-export interface IEvent {
-    name: string;
-    date: string;
-};
 
 @singleton()
 export class EventsHandler {

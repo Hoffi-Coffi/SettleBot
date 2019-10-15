@@ -3,7 +3,7 @@ import Discord from "discord.js";
 
 import { Logger } from "../utilities/logger";
 import ServerUtils from "../utilities/serverUtils";
-import { CommandType } from "../handlers/commandHandler";
+import { CommandType } from "../utilities/models";
 
 const MOD = "helpService.ts";
 

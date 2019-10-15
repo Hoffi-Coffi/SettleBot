@@ -5,7 +5,7 @@ import { ConfigHandler } from "../handlers/configHandler";
 
 import { Logger } from "../utilities/logger";
 import Guard from "../utilities/guard";
-import { CommandType } from "../handlers/commandHandler";
+import { CommandType } from "../utilities/models";
 
 const MOD = "configService.ts";
 
