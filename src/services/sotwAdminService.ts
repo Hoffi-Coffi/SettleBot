@@ -413,8 +413,8 @@ export class SotwAdminService {
 
         var res = this.sotw(comp, "", -1);
         if (res.length > 2000) {
-            msg.reply(res.substring(0, 1999));
-            msg.reply(res.substring(2000, res.length));
+            msg.reply(res.substring(0, 1996) + "```");
+            msg.reply("```" + res.substring(1997, res.length));
         }
         else msg.reply(res);
     }
