@@ -43,6 +43,8 @@ export class SotwAdminService {
     private sotwChannel: Discord.TextChannel;
     private server: Discord.Guild;
 
+    private pollLink: string; // todo: upcoming strawpoll stuff
+
     constructor(private memberHandler: MemberHandler,
         private osrsHandler: OsrsHandler,
         private sotwHandler: SotwHandler,
@@ -60,13 +62,18 @@ export class SotwAdminService {
         registerCallback("sotw", (msg, args) => this.skillOfTheWeek(msg, args), CommandType.Public, (msg) => Guard.isSotwChan(msg));
         registerCallback("update", (msg, args) => this.updatePlayer(msg, args), CommandType.Public, (msg) => Guard.isSotwChan(msg));
 
+        registerCallback("sotwall", (msg) => this.skillOfTheWeekAll(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback("setpoll", (msg, args) => this.setPollLink(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback("clearpoll", (msg) => this.clearPollLink(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback("poll", (msg) => this.poll(msg), CommandType.Public, (msg) => Guard.isSotwChan(msg));
+
         registerCallback("updateall", (msg) => this.updateAllPlayers(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
         registerCallback("sotwinfo", (msg) => this.sendInfo(msg), CommandType.All);
         registerCallback("newcomp", (msg, args) => this.stageNewSotw(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
         registerCallback("abandon", (msg) => this.abandonSotw(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
         registerCallback("confirm", (msg) => this.confirmSotw(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
 
-        this.logger.info("Registered 6 commands.", MOD);
+        this.logger.info("Registered 12 commands.", MOD);
     }
 
     setup(_competitorRole: Discord.Role, _sotwChannel: Discord.GuildChannel, _server: Discord.Guild): void {
@@ -79,6 +86,31 @@ export class SotwAdminService {
 
         if (!this.competitorRole) this.logger.warn("Couldn't find a competitor role.", MOD);
         if (!this.sotwChannel) this.logger.warn("Couldn't find a SOTW channel", MOD);
+    }
+
+    private setPollLink(msg: Discord.Message, args: string[]): void {
+        if (args.length < 1) {
+            msg.reply("You must specify a poll link.");
+            return;
+        }
+
+        this.pollLink = args[0];
+        msg.reply("Set!");
+    }
+
+    private poll(msg: Discord.Message): void {
+        if (!this.pollLink) {
+            msg.reply("there isn't a poll running at the moment.");
+            return;
+        }
+
+        msg.reply(this.pollLink);
+    }
+
+    private clearPollLink(msg: Discord.Message): void {
+        this.pollLink = undefined;
+
+        msg.reply("Done!");
     }
 
     private stageNewSotw(msg: Discord.Message, args: string[]): void {
@@ -376,6 +408,17 @@ export class SotwAdminService {
         msg.reply("All set up! I'll ping everyone when the competition starts.");
     }
 
+    private skillOfTheWeekAll(msg: Discord.Message) {
+        var comp = this.sotwHandler.getActiveComp();
+
+        var res = this.sotw(comp, "", -1);
+        if (res.length > 2000) {
+            msg.reply(res.substring(0, 1999));
+            msg.reply(res.substring(2000, res.length));
+        }
+        else msg.reply(res);
+    }
+
     private skillOfTheWeek(msg: Discord.Message, args: string[]) {
         var comp = this.sotwHandler.getActiveComp();
 
@@ -419,7 +462,7 @@ export class SotwAdminService {
 
         var cells: string[][] = [];
         competitors.forEach((comp, idx) => {
-            if (idx + 1 > limit) return;
+            if (limit > 0 && idx + 1 > limit) return;
             var rsn = Formatter.formatRSN(comp.rsn);
 
             var row = [
@@ -534,6 +577,9 @@ export class SotwAdminService {
                         this.sotwChannel.send(res);
                         this.competitorRole.setMentionable(false);
                         ServerUtils.emptyRole(this.competitorRole);
+
+                        var winner = comp.competitors.sort((a, b) => (b.endExp - b.startExp) - (a.endExp - a.startExp))[0];
+                        this.sotwChannel.send(`Congratulations to ${winner.rsn} for winning the ${comp.skill[0].toUpperCase() + comp.skill.substring(1)} competition!\n\nRemember to sign-up for the next competition using \`&joincomp\`!`);
                     });
             });
         }, (diff + 30000));
