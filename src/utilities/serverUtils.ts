@@ -7,6 +7,8 @@ export default class ServerUtils {
     private static logger: Logger = new Logger();
 
     static addRoleToUser(memb: Discord.GuildMember, role: Discord.Role): void {
+        if (!memb) return;
+
         memb.addRole(role)
             .catch(err => {
                 this.logger.error(`Failed to add ${role.name} role to ${memb}. Error: ${err}`, MOD);
