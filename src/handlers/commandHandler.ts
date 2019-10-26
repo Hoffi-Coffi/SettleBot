@@ -14,6 +14,7 @@ import { EventsService } from '../services/eventsService';
 import { LuckyService } from '../services/luckyService';
 import { SotwAdminService } from '../services/sotwAdminService';
 import { CommandType } from '../utilities/models';
+import { LeaderboardService } from '../services/leaderboardService';
 
 const MOD = "commandHandler.ts";
 
@@ -38,6 +39,7 @@ export class CommandHandler {
         private eventsService: EventsService,
         private luckyService: LuckyService,
         private sotwAdminService: SotwAdminService,
+        private leaderboardService: LeaderboardService,
         private logger: Logger) {}
 
     private registerCommand(
@@ -80,6 +82,8 @@ export class CommandHandler {
         this.luckyService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
         this.sotwAdminService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
+        this.leaderboardService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
 
         this.logger.info(`Command registration complete. Total commands: ${this.commandDefinitions.length}`, MOD);

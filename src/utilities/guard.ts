@@ -20,6 +20,20 @@ export default class Guard {
         return this.modPermCheck(memb);
     }
 
+    static hasRole(msg: Discord.Message, roleName: string): boolean {
+        if (!this.server) return false;
+
+        var memb = this.server.member(msg.author);
+
+        if (!memb) return false;
+
+        var findRole = memb.roles.find((role) => role.name.toLowerCase() === roleName.toLowerCase());
+
+        if (findRole) return true;
+
+        return false;
+    }
+
     private static modPermCheck(memb: Discord.GuildMember): boolean {
         return (memb && memb.hasPermission(Discord.Permissions.FLAGS.KICK_MEMBERS));
     }

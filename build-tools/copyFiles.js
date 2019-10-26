@@ -1,7 +1,7 @@
 var fs = require('fs');
 
 var filesToCopy = ["badwords.json", "config.json", 
-    "rsns.json", "stats.json", "events.json", "sotw.json"];
+    "rsns.json", "stats.json", "events.json", "sotw.json", "leaderboards.json"];
 
 var outDir = "./dist/bot/";
 var cmdArgs = process.argv.slice(2);
