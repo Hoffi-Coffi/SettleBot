@@ -333,7 +333,7 @@ export class SotwAdminService {
                     endExp: skill.exp
                 };
 
-                this.sotwHandler.addOrUpdateCompetitor(competitor);
+                this.sotwHandler.addStagedCompetitor(competitor);
                 ServerUtils.addRoleToUser(msg.guild.member(msg.author), this.competitorRole);
 
                 msg.reply("I've added you to the list. I'll let you know when the next competition starts.");
@@ -577,6 +577,7 @@ export class SotwAdminService {
                         this.sotwChannel.send(res);
                         this.competitorRole.setMentionable(false);
                         ServerUtils.emptyRole(this.competitorRole);
+                        this.sotwAdminHandler.clearCompetitors();
 
                         var winner = comp.competitors.sort((a, b) => (b.endExp - b.startExp) - (a.endExp - a.startExp))[0];
                         this.sotwChannel.send(`Congratulations to ${winner.rsn} for winning the ${comp.skill[0].toUpperCase() + comp.skill.substring(1)} competition!\n\nRemember to sign-up for the next competition using \`&joincomp\`!`);

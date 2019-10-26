@@ -55,7 +55,7 @@ export class SotwAdminHandler {
 
     private saveCompetitors(): void {
         fs.writeFile("./competitors.json", JSON.stringify(this.competitors), (err) => {
-            if (err) this.logger.error(`Failed to save events: ${err}`, MOD);
+            if (err) this.logger.error(`Failed to save competitors: ${err}`, MOD);
         });
     }
 }

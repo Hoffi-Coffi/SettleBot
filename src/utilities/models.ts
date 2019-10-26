@@ -13,6 +13,16 @@ export interface Member {
     id: string
 };
 
+export interface LeaderboardMember {
+    discordId: string,
+    score: number
+};
+
+export interface Leaderboard {
+    type: string,
+    scores: LeaderboardMember[]
+};
+
 export interface IMetric {
     name: Metric;
     count: number;

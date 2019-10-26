@@ -88,11 +88,8 @@ typings/
 .dynamodb/
 
 # Sensitive files
-auth.*.json
-rsns.json
-stats.json
-badwords*.json
-config.json
+src/*.json
+badwords.json
 utilities/guard.js
 
 # Output

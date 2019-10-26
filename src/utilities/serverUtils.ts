@@ -4,7 +4,14 @@ import Discord from 'discord.js';
 const MOD: string = "serverUtils.ts";
 
 export default class ServerUtils {
+    private static server: Discord.Guild;
     private static logger: Logger = new Logger();
+
+    static getDiscordMemberById(discordId: string): Discord.GuildMember {
+        if (!this.server) return;
+
+        return this.server.member(discordId);
+    }
 
     static addRoleToUser(memb: Discord.GuildMember, role: Discord.Role): void {
         if (!memb) return;
@@ -54,5 +61,9 @@ export default class ServerUtils {
             .catch((err) => {
                 this.logger.warn(`Failed to delete message. Error: ${err}`, MOD);
             });
+    }
+
+    static setServer(_server: Discord.Guild): void {
+        this.server = _server;
     }
 };

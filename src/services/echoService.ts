@@ -2,6 +2,7 @@ import Discord from "discord.js";
 
 import { injectable } from "tsyringe";
 import { Logger } from "../utilities/logger";
+import Guard from "../utilities/guard";
 
 const MOD = "echoService.ts";
 
@@ -16,6 +17,7 @@ export class EchoService {
 
         if (!chan) return false;
         if (chan.name !== "minigame-recommendations") return false;
+        if (Guard.isAdmin(msg)) return false;
 
         if (this.echoChannel) {
             this.echoChannel.send(`${msg.author} said: "${msg.content}"`);

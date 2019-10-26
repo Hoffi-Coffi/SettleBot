@@ -20,6 +20,7 @@ import {CommandHandler} from "./handlers/commandHandler";
 import {FilterService} from "./services/filterService";
 import {EchoService} from "./services/echoService";
 import { CommandType } from './utilities/models';
+import ServerUtils from './utilities/serverUtils';
 
 var cmdHandler = container.resolve(CommandHandler);
 var filterService = container.resolve(FilterService);
@@ -42,6 +43,7 @@ bot.on('ready', () => {
 
     var server = bot.guilds.first();
     Guard.setServer(server);
+    ServerUtils.setServer(server);
     logger.info(`Connected to server: ${server.name}`, MOD);
 
     // Ensure the bot doesn't connect to the live server in development mode.
