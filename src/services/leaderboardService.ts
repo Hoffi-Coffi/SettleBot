@@ -47,7 +47,7 @@ export class LeaderboardService {
             var memb = ServerUtils.getDiscordMemberById(row.discordId);
 
             var membName = "Unknown User";
-            if (memb) membName = memb.displayName;
+            if (memb) membName = memb.user.username;
 
             newRow.push(`${idx + 1}`);
             newRow.push(membName);
@@ -73,7 +73,7 @@ export class LeaderboardService {
 
                     var row = [
                         (leaderboard.scores.indexOf(found) + 1).toString(),
-                        memb.displayName,
+                        memb.user.username,
                         found.score.toLocaleString()
                     ];
 
@@ -88,7 +88,7 @@ export class LeaderboardService {
         }
 
         var table: Table = {
-            header: ["Hide-n-Seek Leaderboard"],
+            header: ["Hide-n-Seek", "Leaderboard"],
             columns: ["Pos.", "Name", "Score"],
             rows: cells,
             footer: foot
