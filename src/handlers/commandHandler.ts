@@ -15,6 +15,7 @@ import { LuckyService } from '../services/luckyService';
 import { SotwAdminService } from '../services/sotwAdminService';
 import { CommandType } from '../utilities/models';
 import { LeaderboardService } from '../services/leaderboardService';
+import { NotifyService } from '../services/notifyService';
 
 const MOD = "commandHandler.ts";
 
@@ -40,6 +41,7 @@ export class CommandHandler {
         private luckyService: LuckyService,
         private sotwAdminService: SotwAdminService,
         private leaderboardService: LeaderboardService,
+        private notifyService: NotifyService,
         private logger: Logger) {}
 
     private registerCommand(
@@ -85,6 +87,8 @@ export class CommandHandler {
             this.registerCommand(trigger, action, commandType, preReq));
         this.leaderboardService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
+        this.notifyService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
 
         this.logger.info(`Command registration complete. Total commands: ${this.commandDefinitions.length}`, MOD);
     }
@@ -109,6 +113,7 @@ export class CommandHandler {
         this.memberService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'));
         this.sotwAdminService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'), sotwChannel, server);
         this.helpService.setup(server.channels.find((chan) => chan.name === "rules-and-info"), sotwChannel);
+        this.notifyService.setup(server.roles.find((role) => role.name === "Event Notifications"), server.channels.find((chan) => chan.name === "general-minigame"), server.channels.find((chan) => chan.name === "minigame-info"));
     }
 
     trigger(trigger: string, msg: Discord.Message, args: string[], commandType: CommandType): boolean {

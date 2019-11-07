@@ -18,6 +18,7 @@ var authProd = require('./auth.prod.json');
 //#region Modules
 import {CommandHandler} from "./handlers/commandHandler";
 import {FilterService} from "./services/filterService";
+import {NotifyService} from "./services/notifyService";
 import {EchoService} from "./services/echoService";
 import { CommandType } from './utilities/models';
 import ServerUtils from './utilities/serverUtils';
@@ -25,6 +26,7 @@ import ServerUtils from './utilities/serverUtils';
 var cmdHandler = container.resolve(CommandHandler);
 var filterService = container.resolve(FilterService);
 var echoService = container.resolve(EchoService);
+var notifyService = container.resolve(NotifyService);
 //#endregion
 
 const MOD = "bot.ts";
@@ -57,6 +59,18 @@ bot.on('ready', () => {
     cmdHandler.setup(bot);
 
     echoService.setEchoChannel(server.channels.find(chan => chan.name === "mini-recs"));
+});
+
+bot.on('messageReactionAdd', (msgReact: Discord.MessageReaction, user: Discord.User) => {
+    if (user.tag === bot.user.tag) return;
+
+    notifyService.handleReactAdd(msgReact, user);
+});
+
+bot.on('messageReactionRemove', (msgReact: Discord.MessageReaction, user: Discord.User) => {
+    if (user.tag === bot.user.tag) return;
+
+    notifyService.handleReactRemove(msgReact, user);
 });
 
 bot.on('message', msg => {
