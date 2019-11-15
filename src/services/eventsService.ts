@@ -24,7 +24,7 @@ export class EventsService {
             => boolean) 
         => void): void {
         registerCallback("events", (msg) => this.getEvents(msg), CommandType.Public);
-        registerCallback("addevent", (msg, args) => this.addEvent(msg, args), CommandType.Public, (msg) => Guard.isAdmin(msg) && Guard.isAdminChan(msg));
+        registerCallback("addevent", (msg, args) => this.addEvent(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
         registerCallback("reloadevents", (msg) => this.reloadEvents(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
 
         this.logger.info("Registered 3 commands.", MOD);
