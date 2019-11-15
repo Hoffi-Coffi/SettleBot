@@ -211,7 +211,7 @@ export class SotwAdminService {
     private updatePlayer(msg: Discord.Message, args: string[]): void {
         var search: any;
 
-        var getRSN = this.memberHandler.get(msg.author.username);
+        var getRSN = this.memberHandler.getById(msg.author.id);
 
         search = getRSN;
 
@@ -270,7 +270,7 @@ export class SotwAdminService {
     }
 
     private joinComp(msg: Discord.Message): void {
-        var getRSN = this.memberHandler.get(msg.author.username);
+        var getRSN = this.memberHandler.getById(msg.author.id);
 
         if (!getRSN) {
             msg.reply("you need to register your RSN with me before you can use this command. Try `&register <rsn>` first.");
@@ -430,7 +430,7 @@ export class SotwAdminService {
         var search = "";
         if (args && msg) {
             if (args.length < 1) {
-                var getRSN = this.memberHandler.get(msg.author.username);
+                var getRSN = this.memberHandler.getById(msg.author.id);
 
                 if (getRSN) {
                     search = Formatter.formatRSN(getRSN.rsn.toLowerCase());
