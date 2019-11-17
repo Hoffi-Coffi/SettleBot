@@ -1,5 +1,6 @@
-import { injectable } from "tsyringe";
+import { injectable, singleton } from "tsyringe";
 import Discord from "discord.js";
+import Canvas from "canvas";
 
 import { Logger } from "../utilities/logger";
 import { MemberHandler } from "../handlers/memberHandler";
@@ -10,8 +11,37 @@ import { OsrsHandler } from "../handlers/osrsHandler";
 
 const MOD = "statsService.ts";
 
-@injectable()
+const positionMap = {
+    attack: [40, 22],
+    overall: [0, 0],
+    defence: [40, 86],
+    strength: [40, 54],
+    hitpoints: [104, 22],
+    ranged: [40, 118],
+    prayer: [40, 150],
+    magic: [40, 182],
+    cooking: [168, 118],
+    woodcutting: [168, 182],
+    fletching: [104, 182],
+    fishing: [168, 86],
+    firemaking: [168, 150],
+    crafting: [104, 150],
+    smithing: [168, 54],
+    mining: [168, 22],
+    herblore: [104, 86],
+    agility: [104, 54],
+    thieving: [104, 118],
+    slayer: [104, 214],
+    farming: [168, 214],
+    runecraft: [40, 214],
+    hunter: [104, 246],
+    construction: [40, 246]
+};
+
+@singleton()
 export class StatsService {
+    private statsBg: Canvas.Image;
+
     constructor(private memberHandler: MemberHandler, 
         private osrsHandler: OsrsHandler,
         private logger: Logger) {}
@@ -25,13 +55,17 @@ export class StatsService {
         => void): void {
         registerCallback("stats", (msg, args) => this.getPlayerStats(msg, args), CommandType.Public);
 
+        Canvas.loadImage("./statsbg.png").then((img) => {
+            this.statsBg = img;
+        });
+
         this.logger.info("Registered 1 command.", MOD);
     }
 
     private getPlayerStats(msg: Discord.Message, args: string[]): void {
         var search: any;
 
-        var player = this.memberHandler.get(msg.author.username);
+        var player = this.memberHandler.getById(msg.author.id);
 
         search = player;
 
@@ -46,37 +80,44 @@ export class StatsService {
             search = player.rsn;
         }
 
+        if (search.toLowerCase() === 'swampletics') {
+            msg.reply("no spoilers pls 😡😡😡");
+            return;
+        }
+
         this.osrsHandler.getPlayerStats(search, (player) => {
             if (!player) {
                 msg.reply("I can't find that RSN on the OSRS Hiscores.");
                 return;
             }
 
-            var cells: string[][] = [];
+            Canvas.registerFont("./runescape_uf.ttf", { family: "Runescape" });
+            var canvas = Canvas.createCanvas(204, 275);
+            var ctx = canvas.getContext('2d');
+            ctx.font = '16px "Runescape"';
+            ctx.fillStyle = 'rgb(255, 255, 0)';
+            ctx.shadowOffsetX = 1;
+            ctx.shadowOffsetY = 1;
+            ctx.shadowColor = 'rgb(0, 0, 0)';
+
+            ctx.drawImage(this.statsBg, 0, 0);
 
             Object.keys(player).forEach((key) => {
-                var newRow = [];
+                if (key === "overall") return;
 
                 var line: OsrsSkill = player[key];
                 if (!line) return;
 
-                newRow.push(key[0].toUpperCase() + key.substring(1));
-                newRow.push(line.exp.toLocaleString());
-                newRow.push(line.level.toLocaleString());
-                newRow.push(line.rank.toLocaleString());
-
-                cells.push(newRow);
+                var posMap = positionMap[key];
+                ctx.fillText(line.level.toLocaleString(), posMap[0], posMap[1]);
+                ctx.fillText(line.level.toLocaleString(), posMap[0] + 13, posMap[1] + 13);
             });
 
-            var table: Table = {
-                header: [`Stats for ${Formatter.formatRSN(search)}:`],
-                columns: ["Skill", "Exp", "Level", "Rank"],
-                rows: cells
-            };
+            ctx.textAlign = "center";
+            ctx.fillText(player.overall.level.toString(), 165, 258);
 
-            var result = TableBuilder.build(table);
-
-            msg.channel.send("```" + result + "```");
+            var stream = canvas.createPNGStream();
+            msg.channel.send(`Stats for ${Formatter.formatRSN(search)}:`, new Discord.Attachment(stream));
         });
     }
 }
