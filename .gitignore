@@ -91,6 +91,7 @@ typings/
 src/*.json
 badwords.json
 utilities/guard.js
+src/img/*
 
 # Output
 dist/
