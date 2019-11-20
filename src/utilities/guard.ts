@@ -20,6 +20,17 @@ export default class Guard {
         return this.modPermCheck(memb);
     }
 
+    static isBotChannelOrMod(msg: Discord.Message): boolean {
+        if (msg.channel.type !== "text") return false;
+
+        var chan: Discord.TextChannel = <Discord.TextChannel>msg.channel;
+
+        if (!chan) return false;
+        if (chan.name === 'bot-channel') return true;
+
+        return this.modPermCheck(msg.guild.member(msg.author));
+    }
+
     static hasRole(msg: Discord.Message, roleName: string): boolean {
         if (!this.server) return false;
 

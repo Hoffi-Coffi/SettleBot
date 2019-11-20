@@ -8,6 +8,7 @@ import Formatter from "../utilities/formatter";
 import TableBuilder, { Table } from "../utilities/tableBuilder";
 import { CommandType, OsrsSkill } from "../utilities/models";
 import { OsrsHandler } from "../handlers/osrsHandler";
+import Guard from "../utilities/guard";
 
 const MOD = "statsService.ts";
 
@@ -53,7 +54,7 @@ export class StatsService {
             preReq?: (msg: Discord.Message) 
             => boolean) 
         => void): void {
-        registerCallback("stats", (msg, args) => this.getPlayerStats(msg, args), CommandType.Public);
+        registerCallback("stats", (msg, args) => this.getPlayerStats(msg, args), CommandType.Public, (msg) => Guard.isBotChannelOrMod(msg));
 
         Canvas.loadImage("./statsbg.png").then((img) => {
             this.statsBg = img;
@@ -105,12 +106,17 @@ export class StatsService {
             Object.keys(player).forEach((key) => {
                 if (key === "overall") return;
 
+                var level = (key === "hitpoints") ? 10 : 1;
+
                 var line: OsrsSkill = player[key];
-                if (!line) return;
+                if (line) level = line.level;
+
+                var offset = 0;
+                if (level < 10) offset = 4;
 
                 var posMap = positionMap[key];
-                ctx.fillText(line.level.toLocaleString(), posMap[0], posMap[1]);
-                ctx.fillText(line.level.toLocaleString(), posMap[0] + 13, posMap[1] + 13);
+                ctx.fillText(level.toLocaleString(), posMap[0] + offset, posMap[1]);
+                ctx.fillText(level.toLocaleString(), posMap[0] + 13 + offset, posMap[1] + 13);
             });
 
             ctx.textAlign = "center";
