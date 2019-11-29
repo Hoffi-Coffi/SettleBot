@@ -3,6 +3,7 @@ import * as Discord from "discord.js";
 
 import { Logger } from "../utilities/logger";
 import { CommandType } from "../utilities/models";
+import Guard from "../utilities/guard";
 
 const MOD = "luckyService.ts";
 
@@ -33,16 +34,12 @@ export class LuckyService {
     constructor(private logger: Logger) {}
 
     startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("lucky", (msg, args) => this.rollLuckies(msg, args), CommandType.Public);
+        registerCallback("lucky", (msg, args) => this.rollLuckies(msg, args), CommandType.Public, (msg) => Guard.isBotChannelOrMod(msg));
 
         this.logger.info("Registered 1 command.", MOD);
     }
 
     rollLuckies(msg: Discord.Message, args: string[]): void {
-        var chan: Discord.TextChannel = <Discord.TextChannel>msg.channel;
-
-        if (chan && chan.name !== "bot-channel") return;
-
         var luckies = 1;
         if (args.length > 0) {
             var inp = parseInt(args[0]);
