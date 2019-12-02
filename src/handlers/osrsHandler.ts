@@ -74,17 +74,17 @@ export class OsrsHandler {
             var skillSplit = skill.split(',');
             if (skillSplit.length < 3) return; // skills entries have three fields
 
-            var rank = parseInt(skillSplit[0]);
+            var exp = parseInt(skillSplit[2]);
 
-            if (rank < 1) {
+            if (exp < 1) {
                 skills.push(null);
                 return;
             }
 
             skills.push({
-                rank: rank,
+                rank: parseInt(skillSplit[0]),
                 level: parseInt(skillSplit[1]),
-                exp: parseInt(skillSplit[2])
+                exp: exp
             });
         });
 
