@@ -103,6 +103,7 @@ export class StatsService {
 
             ctx.drawImage(this.statsBg, 0, 0);
 
+            var overallLevel = 0;
             Object.keys(player).forEach((key) => {
                 if (key === "overall") return;
 
@@ -114,13 +115,17 @@ export class StatsService {
                 var offset = 0;
                 if (level < 10) offset = 4;
 
+                overallLevel += level;
+
                 var posMap = positionMap[key];
                 ctx.fillText(level.toLocaleString(), posMap[0] + offset, posMap[1]);
                 ctx.fillText(level.toLocaleString(), posMap[0] + 13 + offset, posMap[1] + 13);
             });
 
             ctx.textAlign = "center";
-            ctx.fillText(player.overall.level.toString(), 165, 258);
+            if (player.overall && player.overall.level) overallLevel = player.overall.level;
+
+            ctx.fillText(overallLevel.toString(), 165, 258);
 
             var stream = canvas.createPNGStream();
             msg.channel.send(`Stats for ${Formatter.formatRSN(search)}:`, new Discord.Attachment(stream));
