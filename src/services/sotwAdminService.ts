@@ -323,7 +323,7 @@ export class SotwAdminService {
             this.osrsHandler.getPlayerStats(getRSN.rsn, (player) => {
                 if (!player) return;
 
-                var skill: OsrsSkill = player[comp.skill];
+                var skill: OsrsSkill = player[stagedComp.skill];
 
                 if (!skill) return;
 
