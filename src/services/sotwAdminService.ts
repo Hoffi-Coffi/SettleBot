@@ -23,7 +23,7 @@ const skillTopicMap = [
     {skill: "Cooking", topic: "food"}, {skill: "Firemaking", topic: "burn stuff"}, {skill: "Woodcutting", topic: "chop wood :deciduous_tree: :evergreen_tree:"},
     {skill: "Agility", topic: "gotta go fast"}, {skill: "Herblore", topic: "uim's worst nightmare"}, {skill: "Thieving", topic: "illegal activities"},
     {skill: "Fletching", topic: "make stuff to yeet"}, {skill: "Slayer", topic: "kill specific stuff"}, {skill: "Farming", topic: "grow stuff"},
-    {skill: "Construction", topic: "build stuff"}, {skill: "Hunter", topic: "catch animal"}
+    {skill: "Construction", topic: "build stuff"}, {skill: "Hunter", topic: "catch animal"}, {skill: "Overall", topic: "EVERYTHING!"}
 ];
 
 const skillMap = [
@@ -34,7 +34,8 @@ const skillMap = [
     {skill: "cooking", match: ["cook", "cooking"]}, {skill: "firemaking", match: ["fm", "fming", "firemake", "firemaking"]},
     {skill: "woodcutting", match: ["wc", "wcing", "woodcut", "woodcutting"]}, {skill: "agility", match: ["agi", "agil", "agility"]}, {skill: "herblore", match: ["herb", "herblore"]},
     {skill: "thieving", match: ["thieve", "thieving", "theive", "theiving"]}, {skill: "fletching", match: ["fletch", "fletching"]}, {skill: "slayer", match: ["slay", "slayer"]},
-    {skill: "farming", match: ["farm", "farming"]}, {skill: "construction", match: ["con", "cons", "construct", "construction"]}, {skill: "hunter", match: ["hunt", "hunter"]}
+    {skill: "farming", match: ["farm", "farming"]}, {skill: "construction", match: ["con", "cons", "construct", "construction"]}, {skill: "hunter", match: ["hunt", "hunter"]},
+    {skill: "overall", match: ["overall", "all"]}
 ];
 
 @singleton()
@@ -596,9 +597,8 @@ export class SotwAdminService {
 
         response += "**== How does it work? ==**\n";
         response += "A few days before the current competition ends, a Strawpoll will be posted containing options for the next competition. The winner of this poll will be the skill competed on. SettleBot will announce the winning skill _up to_ 30 minutes before the next competition begins.\n\n";
-        response += "Once the competition's started, make sure your CML records have been updated and show on the leaderboard. You can do this with a simple `&update` command, or through the CML website directly. SettleBot will provide a link to the competition page once it's begun.\n\n";
-        response += "During the competition, your gains will only be recorded once you logout of OSRS and update your record with CML using the method(s) above.\n";
-        response += "**Important:** At the end of the competition, _you_ are responsible for making sure all of your gains are recorded _before_ the time is up! CML won't count any updates done _after_ the competition has ended, so we recommend a 2-5 minute buffer before the competition ends.\n\n";
+        response += "During the competition, your gains will only be recorded once you logout of OSRS and update your record with me using the `&update` command. I will check the OSRS Hiscores roughly every 6 hours on top of this.\n";
+        response += "**Important:** At the end of the competition, _you_ are responsible for making sure all of your gains are recorded _before_ the time is up! I won't count any updates done _after_ the competition has ended, so we recommend a 2-5 minute buffer before the competition ends.\n\n";
         response += "After the 7 days are up, a winner will emerge and reap the spoils of their labour. What are the spoils, you ask? Well...";
 
         if (msg.channel.type === 'dm') msg.reply(response);
