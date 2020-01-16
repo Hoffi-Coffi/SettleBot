@@ -181,7 +181,7 @@ export class SotwAdminService {
         this.logger.info(`Beginning bulk update of ${count} players...`, MOD);
 
         comp.competitors.forEach((obj) => {
-            this.osrsHandler.getPlayerStats(obj.rsn, (player) => {
+            this.osrsHandler.getPlayer(obj.rsn, (player) => {
                 count--;
 
                 if (count < 0) return;
@@ -191,7 +191,7 @@ export class SotwAdminService {
                     return;
                 }
 
-                var skill: OsrsSkill = player[comp.skill];
+                var skill: OsrsSkill = player.skills[comp.skill];
                 if (!skill) {
                     this.logger.warn(`Couldn't update RSN "${obj.rsn}" - not ranked for SOTW skill.`);
                     return;
@@ -250,13 +250,13 @@ export class SotwAdminService {
             return;
         }
 
-        this.osrsHandler.getPlayerStats(found.rsn, (player) => {
+        this.osrsHandler.getPlayer(found.rsn, (player) => {
             if (!player) {
                 msg.reply("I couldn't find you on the OSRS Hiscores.");
                 return;
             }
 
-            var skill: OsrsSkill = player[comp.skill];
+            var skill: OsrsSkill = player.skills[comp.skill];
 
             if (!skill) {
                 msg.reply(`you don't seem to be ranked in ${comp.skill[0].toUpperCase() + comp.skill.substring(1)}, so I can't update you.`);
@@ -289,13 +289,13 @@ export class SotwAdminService {
                 return;
             }
 
-            this.osrsHandler.getPlayerStats(getRSN.rsn, (player) => {
+            this.osrsHandler.getPlayer(getRSN.rsn, (player) => {
                 if (!player) {
                     msg.reply("I couldn't find you on the OSRS Hiscores!");
                     return;
                 }
 
-                var skill: OsrsSkill = player[comp.skill];
+                var skill: OsrsSkill = player.skills[comp.skill];
 
                 if (!skill) {
                     msg.reply(`I found you on the OSRS Hiscores, but you don't seem to be ranked in ${comp.skill[0].toUpperCase() + comp.skill.substring(1)}, so I can't add you to the competition.`);
@@ -321,10 +321,10 @@ export class SotwAdminService {
                 return;
             }
 
-            this.osrsHandler.getPlayerStats(getRSN.rsn, (player) => {
+            this.osrsHandler.getPlayer(getRSN.rsn, (player) => {
                 if (!player) return;
 
-                var skill: OsrsSkill = player[stagedComp.skill];
+                var skill: OsrsSkill = player.skills[stagedComp.skill];
 
                 if (!skill) return;
 
@@ -362,12 +362,12 @@ export class SotwAdminService {
             if (memb) {
                 ServerUtils.addRoleToUser(memb, this.competitorRole);
 
-                this.osrsHandler.getPlayerStats(comp.rsn, (player) => {
+                this.osrsHandler.getPlayer(comp.rsn, (player) => {
                     if (!player) return;
 
                     var stagedComp = this.sotwHandler.getStagedComp();
 
-                    var skill: OsrsSkill = player[stagedComp.skill];
+                    var skill: OsrsSkill = player.skills[stagedComp.skill];
 
                     if (!skill) return;
 

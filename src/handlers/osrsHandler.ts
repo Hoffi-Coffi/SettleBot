@@ -2,7 +2,7 @@ import * as https from "https";
 
 import { injectable } from "tsyringe";
 import { Logger } from "../utilities/logger";
-import { OsrsPlayer, OsrsSkill } from "../utilities/models";
+import { OsrsPlayer } from "../utilities/models";
 
 const MOD = "osrsHandler.ts";
 
@@ -12,7 +12,7 @@ const baseURL = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?
 export class OsrsHandler {
     constructor(private logger: Logger) {}
 
-    getPlayerStats(rsn: string, callback: (player: OsrsPlayer) => void): void {
+    getPlayer(rsn: string, callback: (player: OsrsPlayer) => void): void {
         var url = baseURL + rsn;
 
         https.get(url, (res) => {
@@ -23,71 +23,78 @@ export class OsrsHandler {
             });
 
             res.on('end', () => {
-                var skills = this.parseSkills(data);
+                var player = this.parseData(data);
 
-                if (!skills) {
+                if (!player) {
                     callback(null);
                     return;
                 }
-
-                var player: OsrsPlayer = {
-                    overall: skills[0],
-                    attack: skills[1],
-                    defence: skills[2],
-                    strength: skills[3],
-                    hitpoints: skills[4],
-                    ranged: skills[5],
-                    prayer: skills[6],
-                    magic: skills[7],
-                    cooking: skills[8],
-                    woodcutting: skills[9],
-                    fletching: skills[10],
-                    fishing: skills[11],
-                    firemaking: skills[12],
-                    crafting: skills[13],
-                    smithing: skills[14],
-                    mining: skills[15],
-                    herblore: skills[16],
-                    agility: skills[17],
-                    thieving: skills[18],
-                    slayer: skills[19],
-                    farming: skills[20],
-                    runecraft: skills[21],
-                    hunter: skills[22],
-                    construction: skills[23]
-                };
 
                 callback(player);
             });
         });
     }
 
-    private parseSkills(data: string): OsrsSkill[] {
-        if (data.indexOf('404 - Page not found') > -1) {
-            return null;
+    private parseData(data: string): OsrsPlayer {
+        if (data.indexOf('404 - Page not found') > -1) return null;
+
+        if (data.length < 500) return null;
+
+        var dataMap: string[][] = data.trim()
+            .split('\n')
+            .map((str): string[] => str.split(','));
+
+        var player: OsrsPlayer = new OsrsPlayer();
+
+        var skillKeys = Object.keys(player.skills);
+
+        for (var i = 0; i < skillKeys.length; i++) {
+            player.skills[skillKeys[i]] = {
+                rank: parseInt(dataMap[i][0]),
+                level: parseInt(dataMap[i][1]),
+                exp: parseInt(dataMap[i][2])
+            };
         }
 
-        var skills: OsrsSkill[] = [];
+        var idx = skillKeys.length + 1;
+        var minigameKeys = Object.keys(player.minigames);
 
-        var allSkills = data.split('\n');
-        allSkills.forEach((skill) => {
-            var skillSplit = skill.split(',');
-            if (skillSplit.length < 3) return; // skills entries have three fields
+        for (var i = 0; i < 2; i++) {
+            player.minigames[minigameKeys[i]] = {
+                rank: parseInt(dataMap[idx + i][0]),
+                score: parseInt(dataMap[idx + i][1])
+            };
+        }
 
-            var exp = parseInt(skillSplit[2]);
+        idx += 2;
+        var cluesKeys = Object.keys(player.clues);
 
-            if (exp < 1) {
-                skills.push(null);
-                return;
-            }
+        for (var i = 0; i < cluesKeys.length; i++) {
+            player.clues[cluesKeys[i]] = {
+                rank: parseInt(dataMap[idx + i][0]),
+                score: parseInt(dataMap[idx + i][1])
+            };
+        }
 
-            skills.push({
-                rank: parseInt(skillSplit[0]),
-                level: parseInt(skillSplit[1]),
-                exp: exp
-            });
-        });
+        idx += cluesKeys.length;
 
-        return skills;
+        player.minigames[minigameKeys[2]] = {
+            rank: parseInt(dataMap[idx][0]),
+            score: parseInt(dataMap[idx][1])
+        };
+        idx++;
+
+        var bossKeys = Object.keys(player.bosses);
+
+        for (var i = 0; i < bossKeys.length; i++) {
+            if (!dataMap[idx + i]) continue;
+
+            player.bosses[bossKeys[i]] = {
+                rank: parseInt(dataMap[idx + i][0]),
+                score: parseInt(dataMap[idx + i][1])
+            };
+        }
+
+        return player;
     }
 }
