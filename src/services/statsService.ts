@@ -242,6 +242,7 @@ export class StatsService {
 
                 var line: OsrsSkill = player.skills[key];
                 if (line) level = line.level;
+                if (level < 1) level = (key === "hitpoints") ? 10 : 1;
 
                 var offset = 0;
                 if (level < 10) offset = 4;
