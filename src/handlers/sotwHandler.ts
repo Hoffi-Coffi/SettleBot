@@ -66,13 +66,9 @@ export class SotwHandler {
     addOrUpdateCompetitor(competitor: SotwCompetitor): void {
         var search = this.competition.competitors.find((obj) => obj.rsn === competitor.rsn);
 
-        if (search) {
-            this.competition.competitors.splice(this.competition.competitors.indexOf(search), 1);
-            
-            this.competition.competitors.push(competitor);
-        } else {
-            this.competition.competitors.push(competitor);
-        }
+        if (search) this.competition.competitors.splice(this.competition.competitors.indexOf(search), 1);
+
+        this.competition.competitors.push(competitor);
 
         this.saveCompetition();
     }

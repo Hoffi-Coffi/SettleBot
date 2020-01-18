@@ -13,6 +13,32 @@ export interface Member {
     id: string
 };
 
+export interface PollVote {
+    discordId: string,
+    votedFor: string
+};
+
+export interface Poll {
+    options: string[],
+    votes: PollVote[],
+    pollMsgId?: string
+};
+
+export interface PollResult {
+    skill: string,
+    votes: number
+};
+
+export interface PollResults {
+    totalVotes: number,
+    results: PollResult[]
+};
+
+export interface Skills {
+    uncompeted: string[],
+    competed: string[]
+};
+
 export interface LeaderboardMember {
     discordId: string,
     score: number

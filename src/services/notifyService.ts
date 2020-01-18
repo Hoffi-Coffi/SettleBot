@@ -46,18 +46,20 @@ export class NotifyService {
         }
     }
 
-    handleReactAdd(msgReact: Discord.MessageReaction, user: Discord.User): void {
-        if (msgReact.message !== this.reactMessage) return;
-        if (msgReact.emoji.name !== '🔔') return;
+    handleReactAdd(msgReact: Discord.MessageReaction, user: Discord.User): boolean {
+        if (msgReact.message !== this.reactMessage) return false;
+        if (msgReact.emoji.name !== '🔔') return false;
 
         ServerUtils.addRoleToUser(msgReact.message.guild.member(user), this.notifyEventsRole);
+        return true;
     }
 
-    handleReactRemove(msgReact: Discord.MessageReaction, user: Discord.User): void {
-        if (msgReact.message !== this.reactMessage) return;
-        if (msgReact.emoji.name !== '🔔') return;
+    handleReactRemove(msgReact: Discord.MessageReaction, user: Discord.User): boolean {
+        if (msgReact.message !== this.reactMessage) return false;
+        if (msgReact.emoji.name !== '🔔') return false;
 
         ServerUtils.removeRole(msgReact.message.guild.member(user), this.notifyEventsRole, "Requested by user.");
+        return true;
     }
 
     private broadcastNotification(msg: Discord.Message, args: string[]): void {
