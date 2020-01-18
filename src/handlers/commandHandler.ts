@@ -16,6 +16,9 @@ import { SotwAdminService } from '../services/sotwAdminService';
 import { CommandType } from '../utilities/models';
 import { LeaderboardService } from '../services/leaderboardService';
 import { NotifyService } from '../services/notifyService';
+import ServerUtils from '../utilities/serverUtils';
+import { PollService } from '../services/pollService';
+import { PollHandler } from './pollHandler';
 
 const MOD = "commandHandler.ts";
 
@@ -42,6 +45,8 @@ export class CommandHandler {
         private sotwAdminService: SotwAdminService,
         private leaderboardService: LeaderboardService,
         private notifyService: NotifyService,
+        private pollService: PollService,
+        private pollHandler: PollHandler,
         private logger: Logger) {}
 
     private registerCommand(
@@ -89,12 +94,14 @@ export class CommandHandler {
             this.registerCommand(trigger, action, commandType, preReq));
         this.notifyService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
+        this.pollService.startup((trigger, action, commandType, preReq) => 
+            this.registerCommand(trigger, action, commandType, preReq));
 
         this.logger.info(`Command registration complete. Total commands: ${this.commandDefinitions.length}`, MOD);
     }
 
     setup(bot: Discord.Client): void {
-        var server = bot.guilds.first();
+        var server = ServerUtils.getServer();
 
         this.adminService.setup(() => {
             this.logger.info("Destroying bot...", MOD);
@@ -111,9 +118,20 @@ export class CommandHandler {
 
         var sotwChannel = server.channels.find((chan) => chan.name === "sotw-bot");
         this.memberService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'));
-        this.sotwAdminService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'), sotwChannel, server);
+        this.sotwAdminService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'), server.roles.find((role) => role.name === "SOTW Champ"), sotwChannel, server);
         this.helpService.setup(server.channels.find((chan) => chan.name === "rules-and-info"), sotwChannel);
         this.notifyService.setup(server.roles.find((role) => role.name === "Event Notifications"), server.channels.find((chan) => chan.name === "general-minigame"), server.channels.find((chan) => chan.name === "minigame-info"));
+        
+        var poll = this.pollHandler.getPoll();
+
+        if (poll) {
+            var sotwTextChannel = <Discord.TextChannel>sotwChannel;
+            sotwTextChannel.fetchMessage(poll.pollMsgId).then((msg) => {
+                this.pollService.setup(msg, sotwChannel);
+            });
+        } else {
+            this.pollService.setup(null, sotwChannel);
+        }
     }
 
     trigger(trigger: string, msg: Discord.Message, args: string[], commandType: CommandType): boolean {

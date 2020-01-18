@@ -22,11 +22,13 @@ import {NotifyService} from "./services/notifyService";
 import {EchoService} from "./services/echoService";
 import { CommandType } from './utilities/models';
 import ServerUtils from './utilities/serverUtils';
+import { PollService } from './services/pollService';
 
 var cmdHandler = container.resolve(CommandHandler);
 var filterService = container.resolve(FilterService);
 var echoService = container.resolve(EchoService);
 var notifyService = container.resolve(NotifyService);
+var pollService = container.resolve(PollService);
 //#endregion
 
 const MOD = "bot.ts";
@@ -43,10 +45,19 @@ bot.on('ready', () => {
     if (Guard.isDevMode()) logger.info("Running in DEVELOPMENT mode!", MOD);
     else logger.info("Running in PRODUCTION mode!", MOD);
 
-    var server = bot.guilds.first();
+    bot.guilds.forEach((serv) => {
+        logger.info(`Connected to server: ${serv.name}`, MOD);
+    });
+
+    var server = bot.guilds.find((serv) => serv.name !== "D'win Hoffi Coffi");
+    if (server === null) {
+        logger.warn("Couldn't find a server other than the home server. Quitting...", MOD);
+        bot.destroy();
+        return;
+    }
+
     Guard.setServer(server);
     ServerUtils.setServer(server);
-    logger.info(`Connected to server: ${server.name}`, MOD);
 
     // Ensure the bot doesn't connect to the live server in development mode.
     if (Guard.isDevMode() && server.name !== "test") {
@@ -64,20 +75,24 @@ bot.on('ready', () => {
 bot.on('messageReactionAdd', (msgReact: Discord.MessageReaction, user: Discord.User) => {
     if (user.tag === bot.user.tag) return;
 
-    notifyService.handleReactAdd(msgReact, user);
+    if (notifyService.handleReactAdd(msgReact, user)) return;
+    if (pollService.handleReactAdd(msgReact, user)) return;
 });
 
 bot.on('messageReactionRemove', (msgReact: Discord.MessageReaction, user: Discord.User) => {
     if (user.tag === bot.user.tag) return;
 
-    notifyService.handleReactRemove(msgReact, user);
+    if (notifyService.handleReactRemove(msgReact, user)) return;
 });
 
 bot.on('message', msg => {
+    // If this happened in the home server, don't do anything else.
+    if (msg.channel.type !== "dm" && msg.guild !== ServerUtils.getServer()) return;
+
     // If it's the bot speaking, don't do anything else.
     if (msg.author.tag === bot.user.tag) return;
 
-    if (echoService.handleMessage(msg)) return;
+    // if (echoService.handleMessage(msg)) return;
 
     // Memes
     if (msg.content === '73' || msg.content.indexOf(' 73') > -1 || msg.content.indexOf('boaty integer') > -1 || msg.content.indexOf("b0aty integer") > -1 || msg.content.indexOf('73 ') > -1 || msg.content.indexOf('613106980566859787') > -1) {
@@ -89,7 +104,7 @@ bot.on('message', msg => {
     // Attempt to find a command first and foremost.
     if (msg.content.substring(0, 1) === '&') {
         var args = msg.content.substring(1).split(' ');
-        var cmd = args[0];
+        var cmd = args[0].toLowerCase();
 
         args = args.splice(1);
 

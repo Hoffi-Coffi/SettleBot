@@ -12,44 +12,70 @@ import Formatter from "../utilities/formatter";
 import { OsrsHandler } from "../handlers/osrsHandler";
 import { SotwHandler } from "../handlers/sotwHandler";
 import TableBuilder, { Table } from "../utilities/tableBuilder";
+import { SkillsHandler } from "../handlers/skillsHandler";
 
 const MOD = "sotwAdminService.ts";
 
 const skillTopicMap = [
-    {skill: "Attack", topic: "hit thing :crossed_swords:"}, {skill: "Strength", topic: "STRONK :muscle:"}, {skill: "Defence", topic: "not be hit :shield:"},
-    {skill: "Ranged", topic: "yeeting :bow_and_arrow:"}, {skill: "Prayer", topic: "bothering deities :pray:"}, {skill: "Magic", topic: "splashing"},
-    {skill: "Runecraft", topic: "make magic rocks"}, {skill: "Hitpoints", topic: "livin' :heart:"}, {skill: "Crafting", topic: "make thing :tools:"},
-    {skill: "Mining", topic: "hit rock :pick:"}, {skill: "Smithing", topic: "armour make :hammer:"}, {skill: "Fishing", topic: "obtain swimmers :fish:"},
-    {skill: "Cooking", topic: "food"}, {skill: "Firemaking", topic: "burn stuff"}, {skill: "Woodcutting", topic: "chop wood :deciduous_tree: :evergreen_tree:"},
-    {skill: "Agility", topic: "gotta go fast"}, {skill: "Herblore", topic: "uim's worst nightmare"}, {skill: "Thieving", topic: "illegal activities"},
-    {skill: "Fletching", topic: "make stuff to yeet"}, {skill: "Slayer", topic: "kill specific stuff"}, {skill: "Farming", topic: "grow stuff"},
-    {skill: "Construction", topic: "build stuff"}, {skill: "Hunter", topic: "catch animal"}, {skill: "Overall", topic: "EVERYTHING!"}
+    {skill: "Combat", topic: "hit thing :crossed_swords:"},
+    {skill: "Ranged", topic: "yeeting :bow_and_arrow:"}, 
+    {skill: "Prayer", topic: "bothering deities :pray:"}, 
+    {skill: "Magic", topic: "splashing"},
+    {skill: "Runecraft", topic: "make magic rocks"}, 
+    {skill: "Crafting", topic: "make thing :tools:"},
+    {skill: "Mining", topic: "hit rock :pick:"}, 
+    {skill: "Smithing", topic: "armour make :hammer:"}, 
+    {skill: "Fishing", topic: "obtain swimmers :fish:"},
+    {skill: "Cooking", topic: "food"}, 
+    {skill: "Firemaking", topic: "burn stuff"}, 
+    {skill: "Woodcutting", topic: "chop wood :deciduous_tree: :evergreen_tree:"},
+    {skill: "Agility", topic: "gotta go fast"}, 
+    {skill: "Herblore", topic: "uim's worst nightmare"}, 
+    {skill: "Thieving", topic: "illegal activities"},
+    {skill: "Fletching", topic: "make stuff to yeet"}, 
+    {skill: "Slayer", topic: "kill specific stuff"}, 
+    {skill: "Farming", topic: "grow stuff"},
+    {skill: "Construction", topic: "build stuff"}, 
+    {skill: "Hunter", topic: "catch animal"}, 
+    {skill: "Overall", topic: "EVERYTHING!"}
 ];
 
 const skillMap = [
-    {skill: "attack", match: ["att", "atk", "attack"]}, {skill: "strength", match: ["str", "strength", "stren"]}, {skill: "defence", match: ["def", "defence", "defense"]},
-    {skill: "ranged", match: ["range", "ranged", "ranging"]}, {skill: "prayer", match: ["pray", "prayer"]}, {skill: "magic", match: ["mage", "magic"]},
-    {skill: "runecraft", match: ["rc", "runecraft", "runecrafting"]}, {skill: "hitpoints", match: ["hp", "hitpoints", "hitpoint"]}, {skill: "crafting", match: ["craft", "crafting"]},
-    {skill: "mining", match: ["mine", "mining", "mineing"]}, {skill: "smithing", match: ["smith", "smithing"]}, {skill: "fishing", match: ["fish", "fishing"]},
-    {skill: "cooking", match: ["cook", "cooking"]}, {skill: "firemaking", match: ["fm", "fming", "firemake", "firemaking"]},
-    {skill: "woodcutting", match: ["wc", "wcing", "woodcut", "woodcutting"]}, {skill: "agility", match: ["agi", "agil", "agility"]}, {skill: "herblore", match: ["herb", "herblore"]},
-    {skill: "thieving", match: ["thieve", "thieving", "theive", "theiving"]}, {skill: "fletching", match: ["fletch", "fletching"]}, {skill: "slayer", match: ["slay", "slayer"]},
-    {skill: "farming", match: ["farm", "farming"]}, {skill: "construction", match: ["con", "cons", "construct", "construction"]}, {skill: "hunter", match: ["hunt", "hunter"]},
+    {skill: "ranged", match: ["range", "ranged", "ranging"]}, 
+    {skill: "prayer", match: ["pray", "prayer"]}, 
+    {skill: "magic", match: ["mage", "magic"]},
+    {skill: "runecraft", match: ["rc", "runecraft", "runecrafting"]}, 
+    {skill: "combat", match: ["combat", "cmb"]}, 
+    {skill: "crafting", match: ["craft", "crafting"]},
+    {skill: "mining", match: ["mine", "mining", "mineing"]}, 
+    {skill: "smithing", match: ["smith", "smithing"]}, 
+    {skill: "fishing", match: ["fish", "fishing"]},
+    {skill: "cooking", match: ["cook", "cooking"]}, 
+    {skill: "firemaking", match: ["fm", "fming", "firemake", "firemaking"]},
+    {skill: "woodcutting", match: ["wc", "wcing", "woodcut", "woodcutting"]}, 
+    {skill: "agility", match: ["agi", "agil", "agility"]},
+    {skill: "herblore", match: ["herb", "herblore"]},
+    {skill: "thieving", match: ["thieve", "thieving", "theive", "theiving"]},
+    {skill: "fletching", match: ["fletch", "fletching"]}, 
+    {skill: "slayer", match: ["slay", "slayer"]},
+    {skill: "farming", match: ["farm", "farming"]}, 
+    {skill: "construction", match: ["con", "cons", "construct", "construction"]}, 
+    {skill: "hunter", match: ["hunt", "hunter"]},
     {skill: "overall", match: ["overall", "all"]}
 ];
 
 @singleton()
 export class SotwAdminService {
     private competitorRole: Discord.Role;
+    private champRole: Discord.Role;
     private sotwChannel: Discord.TextChannel;
     private server: Discord.Guild;
-
-    private pollLink: string; // todo: upcoming strawpoll stuff
 
     constructor(private memberHandler: MemberHandler,
         private osrsHandler: OsrsHandler,
         private sotwHandler: SotwHandler,
         private sotwAdminHandler: SotwAdminHandler,
+        private skillsHandler: SkillsHandler,
         private logger: Logger) {}
 
     startup(registerCallback: (trigger: string, 
@@ -64,59 +90,32 @@ export class SotwAdminService {
         registerCallback("update", (msg, args) => this.updatePlayer(msg, args), CommandType.Public, (msg) => Guard.isSotwChan(msg));
 
         registerCallback("sotwall", (msg) => this.skillOfTheWeekAll(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
-        registerCallback("setpoll", (msg, args) => this.setPollLink(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
-        registerCallback("clearpoll", (msg) => this.clearPollLink(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
-        registerCallback("poll", (msg) => this.poll(msg), CommandType.Public, (msg) => Guard.isSotwChan(msg));
 
         registerCallback("updateall", (msg) => this.updateAllPlayers(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
-        registerCallback("sotwinfo", (msg) => this.sendInfo(msg), CommandType.All);
         registerCallback("newcomp", (msg, args) => this.stageNewSotw(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
         registerCallback("abandon", (msg) => this.abandonSotw(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
         registerCallback("confirm", (msg) => this.confirmSotw(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
 
-        this.logger.info("Registered 12 commands.", MOD);
+        this.logger.info("Registered 8 commands.", MOD);
     }
 
-    setup(_competitorRole: Discord.Role, _sotwChannel: Discord.GuildChannel, _server: Discord.Guild): void {
+    setup(_competitorRole: Discord.Role, _champRole: Discord.Role, _sotwChannel: Discord.GuildChannel, _server: Discord.Guild): void {
         this.competitorRole = _competitorRole;
+        this.champRole = _champRole;
         this.sotwChannel = <Discord.TextChannel>_sotwChannel;
         this.server = _server;
 
         this.updateTopic();
         this.setupTimeouts();
 
+        if (!this.champRole) this.logger.warn("Couldn't find a champion role.", MOD);
         if (!this.competitorRole) this.logger.warn("Couldn't find a competitor role.", MOD);
         if (!this.sotwChannel) this.logger.warn("Couldn't find a SOTW channel", MOD);
     }
 
-    private setPollLink(msg: Discord.Message, args: string[]): void {
-        if (args.length < 1) {
-            msg.reply("You must specify a poll link.");
-            return;
-        }
-
-        this.pollLink = args[0];
-        msg.reply("Set!");
-    }
-
-    private poll(msg: Discord.Message): void {
-        if (!this.pollLink) {
-            msg.reply("there isn't a poll running at the moment.");
-            return;
-        }
-
-        msg.reply(this.pollLink);
-    }
-
-    private clearPollLink(msg: Discord.Message): void {
-        this.pollLink = undefined;
-
-        msg.reply("Done!");
-    }
-
     private stageNewSotw(msg: Discord.Message, args: string[]): void {
         if (args.length < 1) {
-            msg.reply("You must specify a skill."); //todo (strawpoll stuff)
+            msg.reply("You must specify a skill.");
             return;
         }
 
@@ -191,13 +190,34 @@ export class SotwAdminService {
                     return;
                 }
 
-                var skill: OsrsSkill = player.skills[comp.skill];
-                if (!skill) {
-                    this.logger.warn(`Couldn't update RSN "${obj.rsn}" - not ranked for SOTW skill.`);
-                    return;
+                var exp = 0;
+
+                // Handle "Combat" skill a little differently.
+                if (comp.skill === "combat") {
+                    var att = player.skills.attack;
+                    var str = player.skills.strength;
+                    var def = player.skills.defence;
+                    var hp = player.skills.hitpoints;
+
+                    if (att) exp += att.exp;
+                    if (str) exp += str.exp;
+                    if (def) exp += def.exp;
+                    if (hp) exp += hp.exp;
+
+                    if (exp === 0) {
+                        this.logger.warn(`Couldn't update RSN "${obj.rsn}" - not ranked in any Combat skills.`, MOD);
+                        return;
+                    }
+                } else {
+                    var skill: OsrsSkill = player.skills[comp.skill];
+                    if (!skill) {
+                        this.logger.warn(`Couldn't update RSN "${obj.rsn}" - not ranked for SOTW skill.`, MOD);
+                        return;
+                    }
+                    exp = skill.exp;
                 }
 
-                obj.endExp = skill.exp;
+                obj.endExp = exp;
                 this.sotwHandler.addOrUpdateCompetitor(obj);
 
                 this.logger.info(`A player finished updating. Remaining players: ${count}...`);
@@ -256,14 +276,34 @@ export class SotwAdminService {
                 return;
             }
 
-            var skill: OsrsSkill = player.skills[comp.skill];
+            var exp = 0;
 
-            if (!skill) {
-                msg.reply(`you don't seem to be ranked in ${comp.skill[0].toUpperCase() + comp.skill.substring(1)}, so I can't update you.`);
-                return;
+            // Handle "Combat" skill a little differently.
+            if (comp.skill === "combat") {
+                var att = player.skills.attack;
+                var str = player.skills.strength;
+                var def = player.skills.defence;
+                var hp = player.skills.hitpoints;
+
+                if (att) exp += att.exp;
+                if (str) exp += str.exp;
+                if (def) exp += def.exp;
+                if (hp) exp += hp.exp;
+
+                if (exp === 0) {
+                    msg.reply(`you don't seem to be ranked in any Combat skills, so I can't update you.`);
+                    return;
+                }
+            } else {
+                var skill: OsrsSkill = player.skills[comp.skill];
+                if (!skill) {
+                    msg.reply(`you don't seem to be ranked in ${comp.skill[0].toUpperCase() + comp.skill.substring(1)}, so I can't update you.`);
+                    return;
+                }
+                exp = skill.exp;
             }
 
-            found.endExp = skill.exp;
+            found.endExp = exp;
             this.sotwHandler.addOrUpdateCompetitor(found);
 
             msg.reply(`updated RSN "${Formatter.formatRSN(found.rsn)}" successfully!`);
@@ -324,14 +364,32 @@ export class SotwAdminService {
             this.osrsHandler.getPlayer(getRSN.rsn, (player) => {
                 if (!player) return;
 
-                var skill: OsrsSkill = player.skills[stagedComp.skill];
+                var exp = 0;
 
-                if (!skill) return;
+                // Handle "Combat" skill a little differently.
+                if (stagedComp.skill === "combat") {
+                    var att = player.skills.attack;
+                    var str = player.skills.strength;
+                    var def = player.skills.defence;
+                    var hp = player.skills.hitpoints;
+
+                    if (att) exp += att.exp;
+                    if (str) exp += str.exp;
+                    if (def) exp += def.exp;
+                    if (hp) exp += hp.exp;
+
+                    if (exp === 0) return;
+                } else {
+                    var skill: OsrsSkill = player.skills[stagedComp.skill];
+                    if (!skill) return;
+
+                    exp = skill.exp;
+                }
 
                 var competitor: SotwCompetitor = {
                     rsn: getRSN.rsn,
-                    startExp: skill.exp,
-                    endExp: skill.exp
+                    startExp: exp,
+                    endExp: exp
                 };
 
                 this.sotwHandler.addStagedCompetitor(competitor);
@@ -356,6 +414,8 @@ export class SotwAdminService {
             return;
         }
 
+        this.skillsHandler.setSkillCompeted(competition.skill);
+
         this.sotwAdminHandler.getCompetitors().forEach(comp => {
             var memb = this.server.member(comp.id);
 
@@ -367,14 +427,32 @@ export class SotwAdminService {
 
                     var stagedComp = this.sotwHandler.getStagedComp();
 
-                    var skill: OsrsSkill = player.skills[stagedComp.skill];
+                    var exp = 0;
 
-                    if (!skill) return;
+                    // Handle "Combat" skill a little differently.
+                    if (stagedComp.skill === "combat") {
+                        var att = player.skills.attack;
+                        var str = player.skills.strength;
+                        var def = player.skills.defence;
+                        var hp = player.skills.hitpoints;
+
+                        if (att) exp += att.exp;
+                        if (str) exp += str.exp;
+                        if (def) exp += def.exp;
+                        if (hp) exp += hp.exp;
+
+                        if (exp === 0) return;
+                    } else {
+                        var skill: OsrsSkill = player.skills[stagedComp.skill];
+                        if (!skill) return;
+
+                        exp = skill.exp;
+                    }
 
                     this.sotwHandler.addStagedCompetitor({
                         rsn: comp.rsn,
-                        startExp: skill.exp,
-                        endExp: skill.exp
+                        startExp: exp,
+                        endExp: exp
                     });
                 });
             }
@@ -582,42 +660,15 @@ export class SotwAdminService {
 
                         var winner = comp.competitors.sort((a, b) => (b.endExp - b.startExp) - (a.endExp - a.startExp))[0];
                         this.sotwChannel.send(`Congratulations to ${winner.rsn} for winning the ${comp.skill[0].toUpperCase() + comp.skill.substring(1)} competition!\n\nRemember to sign-up for the next competition using \`&joincomp\`!`);
+
+                        var expertRole = this.sotwChannel.guild.roles.find((role) => role.name == `${comp.skill[0].toUpperCase() + comp.skill.substring(1)} Expert`);
+                        if (expertRole) {
+                            ServerUtils.emptyRole(expertRole);
+                            var winnerMember = this.sotwChannel.guild.member(this.memberHandler.getByRsn(winner.rsn).id);
+                            winnerMember.addRoles([this.champRole, expertRole]);
+                        }
                     });
             });
         }, (diff + 30000));
-    }
-
-    private sendInfo(msg: Discord.Message): void {
-        var response = "**====== Skill-of-the-Week (SOTW) ======**\n";
-        response += "Fancy a challenge? Want to prove your sweatiness once and for all? SOTW is for you!\n\n";
-
-        response += "**== What _is_ SOTW? ==**\n";
-        response += "SOTW is a weekly challenge in which players compete to gain the most XP in a certain skill within 7 days.\n\n";
-        response += "Once the competition has commenced, you will have exactly 7 days to gain more XP than anyone else in the competition using any means necessary! No methods are out of bounds.\n\n";
-
-        response += "**== How does it work? ==**\n";
-        response += "A few days before the current competition ends, a Strawpoll will be posted containing options for the next competition. The winner of this poll will be the skill competed on. SettleBot will announce the winning skill _up to_ 30 minutes before the next competition begins.\n\n";
-        response += "During the competition, your gains will only be recorded once you logout of OSRS and update your record with me using the `&update` command. I will check the OSRS Hiscores roughly every 6 hours on top of this.\n";
-        response += "**Important:** At the end of the competition, _you_ are responsible for making sure all of your gains are recorded _before_ the time is up! I won't count any updates done _after_ the competition has ended, so we recommend a 2-5 minute buffer before the competition ends.\n\n";
-        response += "After the 7 days are up, a winner will emerge and reap the spoils of their labour. What are the spoils, you ask? Well...";
-
-        if (msg.channel.type === 'dm') msg.reply(response);
-        else ServerUtils.directMessage(msg.guild.member(msg.author), response);
-
-        response = "**== REWARDS ==**\n";
-        response += "If you are victorious in a SOTW challenge, you will receive the coveted `SOTW Champ` role. This role will distinguish you as one of the best Runescapers in the Grotto. This role will remain with you forever.\n\n";
-
-        response += "You will _also_ receive another role detailing your expertise in the skill(s) you won competitions for. You can have as many of these roles as you like (provided you win the respective competition), however **BEWARE** - once your skill comes back into the competition, you must fight to keep your expert title, otherwise you may lose it!\n\n";
-
-        response += "**== How do I use SettleBot? ==**\n";
-        response += "Firstly, make sure SettleBot knows who you are by using the command `&register <rsn>` - this command will also allow you to do the `&stats` command without supplying your RSN.\n\n";
-
-        response += "Then, once you're ready to join a competition, simply use the `&joincomp` command! If a competition is currently running, you'll be automatically placed into that competition. Otherwise, you'll be on the waiting list for a new competition.\n\n";
-
-        response += "**IMPORTANT:** You must do `&joincomp` for every competition you wish to enter - your entry won't be carried over from one competition to the next! This is to prevent the competition roster from being bloated with people not competing. You don't need to register your RSN with the bot again, however.\n\n";
-        response += "During a competition, you can use the `&sotw` command to see the top-5 leaderboard. Don't worry if you're not in the top-5! SettleBot will also show you where you currently stand on the leaderboard.";
-
-        if (msg.channel.type === 'dm') msg.reply(response);
-        else ServerUtils.directMessage(msg.guild.member(msg.author), response);
     }
 }

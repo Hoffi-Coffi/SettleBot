@@ -66,4 +66,8 @@ export default class ServerUtils {
     static setServer(_server: Discord.Guild): void {
         this.server = _server;
     }
+
+    static getServer(): Discord.Guild {
+        return this.server;
+    }
 };

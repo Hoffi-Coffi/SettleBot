@@ -1,7 +1,7 @@
 var fs = require('fs');
 
 var filesToCopy = ["badwords.json", "config.json", 
-    "rsns.json", "stats.json", "events.json", "sotw.json", "leaderboards.json"];
+    "rsns.json", "stats.json", "events.json", "sotw.json", "leaderboards.json", "skills.json"];
 var imagesToCopy = ["statsbg.png", "runescape_uf.ttf"];
 
 var outDir = "./dist/bot/";
