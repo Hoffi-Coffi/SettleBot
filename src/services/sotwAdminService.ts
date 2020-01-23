@@ -169,10 +169,14 @@ export class SotwAdminService {
     }
 
     private updateAllPlayers(msg: Discord.Message): void {
+        this.doBulkUpdate((res) => msg.reply(res));
+    }
+
+    private doBulkUpdate(callback?: (res: string) => void): void {
         var comp = this.sotwHandler.getActiveComp();
 
         if (!comp) {
-            msg.reply("There isn't an active competition.");
+            if (callback) callback("There isn't an active competition.");
             return;
         }
 
@@ -222,8 +226,8 @@ export class SotwAdminService {
 
                 this.logger.info(`A player finished updating. Remaining players: ${count}...`);
 
-                if (count === 0) {
-                    msg.reply("All competitors updated!");
+                if (count === 0 && callback) {
+                    callback("All competitors updated!");
                 }
             });
         });
@@ -468,6 +472,7 @@ export class SotwAdminService {
 
             if (!activated) return;
 
+            this.autoUpdateLoop();
             this.updateTopic();
             this.setupTimeouts();
 
@@ -615,7 +620,31 @@ export class SotwAdminService {
         if (this.sotwChannel.topic !== topic) this.sotwChannel.setTopic(topic);
     }
 
-    private setupTimeouts() {
+    private autoUpdateLoop(): void {
+        var comp = this.sotwHandler.getActiveComp();
+
+        if (!comp) return;
+
+        var end = comp.dateEnd;
+        if (!end) return;
+
+        var endMillis = moment(end).valueOf();
+        var nowMillis = moment().valueOf();
+        var diff = endMillis - nowMillis;
+
+        if (diff < 0) return;
+
+        var nextUpdate = nowMillis + (60000 * 30 * 6);
+        if (nextUpdate < endMillis) {
+            this.doBulkUpdate((res) => this.logger.info(res, MOD));
+            this.logger.info(`Scheduling next bulk update 6 hours from now...`, MOD);
+            setTimeout(() => {
+                this.autoUpdateLoop();
+            }, (60000 * 30 * 6));
+        }
+    }
+
+    private setupTimeouts(): void {
         var comp = this.sotwHandler.getActiveComp();
 
         if (!comp) return;
@@ -629,6 +658,8 @@ export class SotwAdminService {
         var diff = endMillis - nowMillis;
 
         if (diff < 0) return;
+
+        this.autoUpdateLoop();
 
         var warnTime = (diff - (60000 * 30));
 
