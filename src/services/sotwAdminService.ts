@@ -85,9 +85,9 @@ export class SotwAdminService {
             preReq?: (msg: Discord.Message) 
             => boolean) 
         => void): void {
-        registerCallback("joincomp", (msg) => this.joinComp(msg), CommandType.Public, (msg) => Guard.isSotwChan(msg));
-        registerCallback("sotw", (msg, args) => this.skillOfTheWeek(msg, args), CommandType.Public, (msg) => Guard.isSotwChan(msg));
-        registerCallback("update", (msg, args) => this.updatePlayer(msg, args), CommandType.Public, (msg) => Guard.isSotwChan(msg));
+        registerCallback("joincomp", (msg) => this.joinComp(msg), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["sotw-bot"]));
+        registerCallback("sotw", (msg, args) => this.skillOfTheWeek(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["sotw-bot"]));
+        registerCallback("update", (msg, args) => this.updatePlayer(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["sotw-bot"]));
 
         registerCallback("sotwall", (msg) => this.skillOfTheWeekAll(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
 
@@ -695,8 +695,15 @@ export class SotwAdminService {
                         var expertRole = this.sotwChannel.guild.roles.find((role) => role.name == `${comp.skill[0].toUpperCase() + comp.skill.substring(1)} Expert`);
                         if (expertRole) {
                             ServerUtils.emptyRole(expertRole);
+
                             var winnerMember = this.sotwChannel.guild.member(this.memberHandler.getByRsn(winner.rsn).id);
-                            winnerMember.addRoles([this.champRole, expertRole]);
+                            if (winnerMember) {
+                                var rolesToAdd: Discord.Role[] = [];
+                                if (!winnerMember.roles.find((role) => role === this.champRole)) rolesToAdd.push(this.champRole);
+                                if (!winnerMember.roles.find((role) => role === expertRole)) rolesToAdd.push(expertRole);
+
+                                if (rolesToAdd.length > 0) winnerMember.addRoles(rolesToAdd);
+                            }
                         }
                     });
             });

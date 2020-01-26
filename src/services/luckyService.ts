@@ -34,7 +34,7 @@ export class LuckyService {
     constructor(private logger: Logger) {}
 
     startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("lucky", (msg, args) => this.rollLuckies(msg, args), CommandType.Public, (msg) => Guard.isBotChannelOrMod(msg));
+        registerCallback("lucky", (msg, args) => this.rollLuckies(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["bot-channel"]));
 
         this.logger.info("Registered 1 command.", MOD);
     }

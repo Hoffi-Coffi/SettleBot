@@ -52,7 +52,7 @@ export class PollService {
         registerCallback("clearpoll", (msg) => this.clearPoll(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
         registerCallback("checkpoll", (msg) => this.checkPollResults(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
         registerCallback("publishpoll", (msg) => this.publishPollResults(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
-        registerCallback("poll", (msg) => this.poll(msg), CommandType.Public, (msg) => Guard.isSotwChan(msg));
+        registerCallback("poll", (msg) => this.poll(msg), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["sotw-bot"]));
 
         this.logger.info("Registered 5 commands.", MOD);
     }

@@ -145,8 +145,8 @@ export class StatsService {
             preReq?: (msg: Discord.Message) 
             => boolean) 
         => void): void {
-        registerCallback("stats", (msg, args) => this.getPlayerStats(msg, args), CommandType.Public, (msg) => Guard.isBotChannelOrMod(msg));
-        registerCallback("kc", (msg, args) => this.bossRecord(msg, args), CommandType.Public, (msg) => Guard.isBotChannelOrMod(msg));
+        registerCallback("stats", (msg, args) => this.getPlayerStats(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["bot-channel", "sotw-bot"]));
+        registerCallback("kc", (msg, args) => this.bossRecord(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["bot-channel", "sotw-bot"]));
 
         Canvas.loadImage("./statsbg.png").then((img) => {
             this.statsBg = img;
