@@ -20,13 +20,13 @@ export default class Guard {
         return this.modPermCheck(memb);
     }
 
-    static isBotChannelOrMod(msg: Discord.Message): boolean {
+    static isChannelOrMod(msg: Discord.Message, chans: string[]): boolean {
         if (msg.channel.type !== "text") return false;
 
         var chan: Discord.TextChannel = <Discord.TextChannel>msg.channel;
 
         if (!chan) return false;
-        if (chan.name === 'bot-channel') return true;
+        if (chans.find((channel) => channel === chan.name)) return true;
 
         return this.modPermCheck(msg.guild.member(msg.author));
     }
@@ -95,14 +95,6 @@ export default class Guard {
         if (!chan) return false;
 
         return chan.name === 'admin-chat';
-    }
-
-    static isSotwChan(msg: Discord.Message): boolean {
-        var chan: Discord.TextChannel = <Discord.TextChannel>msg.channel;
-
-        if (!chan) return false;
-
-        return chan.name === 'sotw-bot';
     }
 
     static isDevMode(): boolean {
