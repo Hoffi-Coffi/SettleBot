@@ -13,9 +13,15 @@ const MOD = "metricService.ts";
 export class MetricService {
     constructor(private handler: MetricHandler, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg?: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("metrics", () => this.getMetrics(), CommandType.Public, (msg) => Guard.isMod(msg));
-        registerCallback("uptime", () => this.uptime(), CommandType.Public, (msg) => Guard.isMod(msg));
+    startup(registerCallback: (trigger: string[], 
+        action: (msg: Discord.Message, 
+            args?: string[]) => void, 
+            commandType: CommandType, 
+            preReq?: (msg: Discord.Message) 
+            => boolean) 
+        => void): void {
+        registerCallback(["metrics"], () => this.getMetrics(), CommandType.Public, (msg) => Guard.isMod(msg));
+        registerCallback(["uptime"], () => this.uptime(), CommandType.Public, (msg) => Guard.isMod(msg));
 
         this.logger.info("Registered 2 commands.", MOD);
     }

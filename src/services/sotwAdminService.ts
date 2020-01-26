@@ -78,23 +78,23 @@ export class SotwAdminService {
         private skillsHandler: SkillsHandler,
         private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, 
+    startup(registerCallback: (trigger: string[], 
         action: (msg: Discord.Message, 
             args?: string[]) => void, 
             commandType: CommandType, 
             preReq?: (msg: Discord.Message) 
             => boolean) 
         => void): void {
-        registerCallback("joincomp", (msg) => this.joinComp(msg), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["sotw-bot"]));
-        registerCallback("sotw", (msg, args) => this.skillOfTheWeek(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["sotw-bot"]));
-        registerCallback("update", (msg, args) => this.updatePlayer(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["sotw-bot"]));
+        registerCallback(["joincomp", "join"], (msg) => this.joinComp(msg), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["sotw-bot"]));
+        registerCallback(["sotw", "comp"], (msg, args) => this.skillOfTheWeek(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["sotw-bot"]));
+        registerCallback(["update"], (msg, args) => this.updatePlayer(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["sotw-bot"]));
 
-        registerCallback("sotwall", (msg) => this.skillOfTheWeekAll(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback(["sotwall"], (msg) => this.skillOfTheWeekAll(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
 
-        registerCallback("updateall", (msg) => this.updateAllPlayers(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
-        registerCallback("newcomp", (msg, args) => this.stageNewSotw(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
-        registerCallback("abandon", (msg) => this.abandonSotw(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
-        registerCallback("confirm", (msg) => this.confirmSotw(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback(["updateall"], (msg) => this.updateAllPlayers(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback(["newcomp"], (msg, args) => this.stageNewSotw(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback(["abandon"], (msg) => this.abandonSotw(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback(["confirm"], (msg) => this.confirmSotw(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
 
         this.logger.info("Registered 8 commands.", MOD);
     }
@@ -180,7 +180,7 @@ export class SotwAdminService {
             return;
         }
 
-        var count = comp.competitors.length - 1;
+        var count = comp.competitors.length;
         this.logger.info(`Beginning bulk update of ${count} players...`, MOD);
 
         comp.competitors.forEach((obj) => {

@@ -23,7 +23,7 @@ import { PollHandler } from './pollHandler';
 const MOD = "commandHandler.ts";
 
 interface ICommandDefinition {
-    trigger: string,
+    trigger: string[],
     action: (msg?: Discord.Message, args?: string[]) => string | void,
     preReq?: (msg: Discord.Message) => boolean
     type: CommandType
@@ -50,7 +50,7 @@ export class CommandHandler {
         private logger: Logger) {}
 
     private registerCommand(
-        trigger: string, 
+        trigger: string[], 
         action: (msg?: Discord.Message, args?: string[]) => string | void, 
         commandType: CommandType,
         preReq?: (msg: Discord.Message) => boolean): void {
@@ -140,7 +140,7 @@ export class CommandHandler {
         else if (commandType === CommandType.Public) cmdType = "Public";
         
         this.logger.info(`Attempting to find handler for ${cmdType} command "${trigger}"...`, MOD);
-        var foundCommand = this.commandDefinitions.find((cmd) => cmd.trigger === trigger && (cmd.type === CommandType.All || cmd.type === commandType));
+        var foundCommand = this.commandDefinitions.find((cmd) => cmd.trigger.indexOf(trigger) > -1 && (cmd.type === CommandType.All || cmd.type === commandType));
 
         if (!foundCommand) {
             this.logger.info("Command not found.", MOD);

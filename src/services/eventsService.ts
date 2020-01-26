@@ -16,16 +16,16 @@ const MOD = "eventsService.ts";
 export class EventsService {
     constructor(private handler: EventsHandler, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, 
+    startup(registerCallback: (trigger: string[], 
         action: (msg: Discord.Message, 
             args?: string[]) => void, 
             commandType: CommandType, 
             preReq?: (msg: Discord.Message) 
             => boolean) 
         => void): void {
-        registerCallback("events", (msg) => this.getEvents(msg), CommandType.Public);
-        registerCallback("addevent", (msg, args) => this.addEvent(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
-        registerCallback("reloadevents", (msg) => this.reloadEvents(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback(["events"], (msg) => this.getEvents(msg), CommandType.Public);
+        registerCallback(["addevent"], (msg, args) => this.addEvent(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback(["reloadevents"], (msg) => this.reloadEvents(msg), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
 
         this.logger.info("Registered 3 commands.", MOD);
     }

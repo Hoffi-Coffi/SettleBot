@@ -16,14 +16,14 @@ export class NotifyService {
 
     constructor(private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, 
+    startup(registerCallback: (trigger: string[], 
         action: (msg: Discord.Message, 
             args?: string[]) => void, 
             commandType: CommandType, 
             preReq?: (msg: Discord.Message) 
             => boolean) 
         => void): void {
-        registerCallback("notifyevents", (msg, args) => this.broadcastNotification(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+        registerCallback(["notifyevents"], (msg, args) => this.broadcastNotification(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
         
         this.logger.info("Registered 1 command.", MOD);
     }
