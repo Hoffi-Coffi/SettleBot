@@ -14,9 +14,15 @@ export class HelpService {
 
     constructor(private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("help", (msg) => this.help(msg), CommandType.All);
-        registerCallback("sotwinfo", (msg) => this.sotwInfo(msg), CommandType.All);
+    startup(registerCallback: (trigger: string[], 
+        action: (msg: Discord.Message, 
+            args?: string[]) => void, 
+            commandType: CommandType, 
+            preReq?: (msg: Discord.Message) 
+            => boolean) 
+        => void): void {
+        registerCallback(["help"], (msg) => this.help(msg), CommandType.All);
+        registerCallback(["sotwinfo"], (msg) => this.sotwInfo(msg), CommandType.All);
 
         this.logger.info("Registered 2 commands.", MOD);
     }

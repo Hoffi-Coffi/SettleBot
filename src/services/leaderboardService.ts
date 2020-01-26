@@ -13,16 +13,16 @@ const MOD = "leaderboardService.ts";
 export class LeaderboardService {
     constructor(private handler: LeaderboardHandler, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, 
+    startup(registerCallback: (trigger: string[], 
         action: (msg: Discord.Message, 
             args?: string[]) => void, 
             commandType: CommandType, 
             preReq?: (msg: Discord.Message) 
             => boolean) 
         => void): void {
-        registerCallback("hns", (msg) => this.hnsLeaderboard(msg), CommandType.Public);
-        registerCallback("hnsadd", (msg) => this.hnsIncrement(msg), CommandType.Public, (msg) => Guard.hasRole(msg, "Minigame Host"));
-        registerCallback("hnsrem", (msg) => this.hnsDecrement(msg), CommandType.Public, (msg) => Guard.hasRole(msg, "Minigame Host"));
+        registerCallback(["hns"], (msg) => this.hnsLeaderboard(msg), CommandType.Public);
+        registerCallback(["hnsadd"], (msg) => this.hnsIncrement(msg), CommandType.Public, (msg) => Guard.hasRole(msg, "Minigame Host"));
+        registerCallback(["hnsrem"], (msg) => this.hnsDecrement(msg), CommandType.Public, (msg) => Guard.hasRole(msg, "Minigame Host"));
 
         this.logger.info("Registered 3 commands.", MOD);
     }

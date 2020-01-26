@@ -16,10 +16,16 @@ export class MemberService {
 
     constructor(private memberHandler: MemberHandler, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("register", (msg, args) => this.registerMember(msg, args), CommandType.Public);
-        registerCallback("check", (msg) => this.checkMember(msg), CommandType.Public);
-        registerCallback("whois", (msg, args) => this.whois(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
+    startup(registerCallback: (trigger: string[], 
+        action: (msg: Discord.Message, 
+            args?: string[]) => void, 
+            commandType: CommandType, 
+            preReq?: (msg: Discord.Message) 
+            => boolean) 
+        => void): void {
+        registerCallback(["register", "setrsn"], (msg, args) => this.registerMember(msg, args), CommandType.Public);
+        registerCallback(["check"], (msg) => this.checkMember(msg), CommandType.Public);
+        registerCallback(["whois"], (msg, args) => this.whois(msg, args), CommandType.Private, (msg) => Guard.isAdminPriv(msg));
 
         this.logger.info("Registered 3 commands.", MOD);
     }

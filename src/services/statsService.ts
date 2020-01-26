@@ -138,15 +138,15 @@ export class StatsService {
         private osrsHandler: OsrsHandler,
         private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, 
+    startup(registerCallback: (trigger: string[], 
         action: (msg: Discord.Message, 
             args?: string[]) => void, 
             commandType: CommandType, 
             preReq?: (msg: Discord.Message) 
             => boolean) 
         => void): void {
-        registerCallback("stats", (msg, args) => this.getPlayerStats(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["bot-channel", "sotw-bot"]));
-        registerCallback("kc", (msg, args) => this.bossRecord(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["bot-channel", "sotw-bot"]));
+        registerCallback(["stats"], (msg, args) => this.getPlayerStats(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["bot-channel", "sotw-bot"]));
+        registerCallback(["kc"], (msg, args) => this.bossRecord(msg, args), CommandType.Public, (msg) => Guard.isChannelOrMod(msg, ["bot-channel", "sotw-bot"]));
 
         Canvas.loadImage("./statsbg.png").then((img) => {
             this.statsBg = img;

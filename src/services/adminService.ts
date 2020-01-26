@@ -18,10 +18,16 @@ export class AdminService {
 
     constructor(private metricHandler: MetricHandler, private logger: Logger) {}
 
-    startup(registerCallback: (trigger: string, action: (msg: Discord.Message, args?: string[]) => void, commandType: CommandType, preReq?: (msg: Discord.Message) => boolean) => void): void {
-        registerCallback("logout", (msg) => this.logout(msg), CommandType.Private, (msg) => Guard.isSeniorModPriv(msg));
-        registerCallback("unmute", (msg) => this.unmuteMember(msg), CommandType.Public, (msg) => Guard.isSeniorMod(msg));
-        registerCallback("mute", (msg) => this.muteMember(msg), CommandType.Public, (msg) => Guard.isMod(msg));
+    startup(registerCallback: (trigger: string[], 
+        action: (msg: Discord.Message, 
+            args?: string[]) => void, 
+            commandType: CommandType, 
+            preReq?: (msg: Discord.Message) 
+            => boolean) 
+        => void): void {
+        registerCallback(["logout"], (msg) => this.logout(msg), CommandType.Private, (msg) => Guard.isSeniorModPriv(msg));
+        registerCallback(["unmute"], (msg) => this.unmuteMember(msg), CommandType.Public, (msg) => Guard.isSeniorMod(msg));
+        registerCallback(["mute", "m"], (msg) => this.muteMember(msg), CommandType.Public, (msg) => Guard.isMod(msg));
 
         this.logger.info("Registered 3 commands.", MOD);
     }
