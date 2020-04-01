@@ -95,7 +95,10 @@ bot.on('message', msg => {
     // if (echoService.handleMessage(msg)) return;
 
     // Memes
-    if (msg.content === '73' || msg.content.indexOf(' 73') > -1 || msg.content.indexOf('boaty integer') > -1 || msg.content.indexOf("b0aty integer") > -1 || msg.content.indexOf('73 ') > -1 || msg.content.indexOf('613106980566859787') > -1) {
+    let words = msg.content.split(/[\s,\?\,\.!]+/)
+    if (words.some((w, i) => {
+        w === '73' || ((w === 'boaty' || w === 'b0aty') && words[i+1]) || w === ':613106980566859787:'
+    })) {
         msg.react('613106980566859787');
     }
 
