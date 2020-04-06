@@ -97,7 +97,7 @@ bot.on('message', msg => {
     // Memes
     const words = msg.content.split(/[\s,\?\,\.!]+/);
     if (words.some((w, i) => {
-        w === '73' || ((w === 'boaty' || w === 'b0aty') && words[i+1]) || w === ':613106980566859787:'
+        w === '73' || ((w === 'boaty' || w === 'b0aty') && words[i+1] === 'integer') || w === ':613106980566859787:'
     })) {
         msg.react('613106980566859787');
     }
