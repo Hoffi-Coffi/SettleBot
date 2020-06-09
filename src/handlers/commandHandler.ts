@@ -12,7 +12,7 @@ import { HelpService } from '../services/helpService';
 import { StatsService } from '../services/statsService';
 import { EventsService } from '../services/eventsService';
 import { LuckyService } from '../services/luckyService';
-import { SotwAdminService } from '../services/sotwAdminService';
+import { CompService } from '../services/compService';
 import { CommandType } from '../utilities/models';
 import { LeaderboardService } from '../services/leaderboardService';
 import { NotifyService } from '../services/notifyService';
@@ -42,7 +42,7 @@ export class CommandHandler {
         private statsService: StatsService,
         private eventsService: EventsService,
         private luckyService: LuckyService,
-        private sotwAdminService: SotwAdminService,
+        private compService: CompService,
         private leaderboardService: LeaderboardService,
         private notifyService: NotifyService,
         private pollService: PollService,
@@ -88,7 +88,7 @@ export class CommandHandler {
             this.registerCommand(trigger, action, commandType, preReq));
         this.luckyService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
-        this.sotwAdminService.startup((trigger, action, commandType, preReq) => 
+        this.compService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
         this.leaderboardService.startup((trigger, action, commandType, preReq) => 
             this.registerCommand(trigger, action, commandType, preReq));
@@ -117,8 +117,8 @@ export class CommandHandler {
         server.roles.find((role) => role.name === "Muted"));
 
         var sotwChannel = server.channels.find((chan) => chan.name === "sotw-bot");
-        this.memberService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'));
-        this.sotwAdminService.setup(server.roles.find((role) => role.name === 'SOTW Competitor'), server.roles.find((role) => role.name === "SOTW Champ"), sotwChannel, server);
+        this.memberService.setup(server.roles.find((role) => role.name === 'Competitor'));
+        this.compService.setup(server.roles.find((role) => role.name === 'Competitor'), server.roles.find((role) => role.name === "SOTW Champ"), sotwChannel, server);
         this.helpService.setup(server.channels.find((chan) => chan.name === "rules-and-info"), sotwChannel);
         this.notifyService.setup(server.roles.find((role) => role.name === "Event Notifications"), server.channels.find((chan) => chan.name === "general-minigame"), server.channels.find((chan) => chan.name === "minigame-info"));
         
