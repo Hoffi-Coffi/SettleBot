@@ -12,33 +12,39 @@ const baseURL = "https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?
 export class OsrsHandler {
     constructor(private logger: Logger) {}
 
-    getPlayer(rsn: string, callback: (player: OsrsPlayer) => void): void {
+    getPlayer(rsn: string, callback: (player: OsrsPlayer, err?: string) => void): void {
         var url = baseURL + rsn;
 
-        https.get(url, (res) => {
+        https.get(url, {timeout: 3000}, (res) => {
             let data = '';
 
             res.on('data', (chunk) => {
                 data += chunk;
             });
 
+            res.on('error', (err) => {
+                this.logger.error(`Error in getting player data: ${err.message}.`, MOD);
+            });
+
             res.on('end', () => {
                 var player = this.parseData(data);
 
-                if (!player) {
-                    callback(null);
+                if (!player[0]) {
+                    callback(null, player[1]);
                     return;
                 }
 
-                callback(player);
+                callback(player[0]);
             });
+        }).on('error', (err) => {
+            this.logger.error(`Error in getting player data: ${err.message}.`, MOD);
         });
     }
 
-    private parseData(data: string): OsrsPlayer {
-        if (data.indexOf('404 - Page not found') > -1) return null;
+    private parseData(data: string): [OsrsPlayer, string] {
+        if (data.indexOf('404 - Page not found') > -1) return [null, "The OSRS Hiscores are currently down, or your RSN could not be found. Please try again later."];
 
-        if (data.length < 500) return null;
+        if (data.length < 500) return [null, "I found your RSN, but something went wrong with the Hiscores. Please try again later."];
 
         var dataMap: string[][] = data.trim()
             .split('\n')
@@ -95,6 +101,6 @@ export class OsrsHandler {
             };
         }
 
-        return player;
+        return [player, null];
     }
 }
