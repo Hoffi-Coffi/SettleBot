@@ -102,7 +102,7 @@ bot.on('message', msg => {
     var commandHandled = false;
 
     // Attempt to find a command first and foremost.
-    if (msg.content.substring(0, 1) === '&') {
+    if (msg.content.substring(0, 1) === '!') {
         var args = msg.content.substring(1).split(' ');
         var cmd = args[0].toLowerCase();
 

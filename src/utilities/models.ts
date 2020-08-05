@@ -152,6 +152,7 @@ export class OsrsBossRecords {
     kreeArra: OsrsScore = new OsrsScore();
     krilTsutsaroth: OsrsScore = new OsrsScore();
     mimic: OsrsScore = new OsrsScore();
+    nightmare: OsrsScore = new OsrsScore();
     obor: OsrsScore = new OsrsScore();
     sarachnis: OsrsScore = new OsrsScore();
     scorpia: OsrsScore = new OsrsScore();
@@ -242,6 +243,8 @@ export const BossMap = [
         noScore: "{rsn} has never killed K'ril Tsutsaroth.", singleScore: "{rsn} has killed K'ril Tsutsaroth once!", display: "{rsn} has killed K'ril Tsutsaroth **{kc}** times!"},
     {boss: "mimic", match: ["mimic", "casket", "chest"], name: "Mimic",
         noScore: "{rsn} has never defeated the Mimic.", singleScore: "{rsn} has defeated the Mimic once!", display: "{rsn} has defeated the Mimic **{kc}** times!"},
+    {boss: "nightmare", match: ["nightmare", "ashihama", "the_nightmare", "the_nightmare_of_ashihama"], name: "The Nightmare of Ashihama",
+        noScore: "{rsn} has never defeated the Nightmare of Ashihama.", singleScore: "{rsn} has defeated the Nightmare of Ashihama once!", display: "{rsn} has defeated the Nightmare of Ashihama **{kc}** times!"},
     {boss: "obor", match: ["obor"], name: "Obor",
         noScore: "{rsn} has never killed Obor.", singleScore: "{rsn} has killed Obor once!", display: "{rsn} has killed Obor **{kc}** times!"},
     {boss: "sarachnis", match: ["sarachnis", "spooder"], name: "Sarachnis",

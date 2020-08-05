@@ -21,10 +21,29 @@ export class LeaderboardService {
             => boolean) 
         => void): void {
         registerCallback(["hns"], (msg) => this.hnsLeaderboard(msg), CommandType.Public);
+        registerCallback(["hnsclean"], (msg) => this.hnsClean(msg), CommandType.Public, (msg) => Guard.isAdmin(msg));
         registerCallback(["hnsadd"], (msg) => this.hnsIncrement(msg), CommandType.Public, (msg) => Guard.hasRole(msg, "Minigame Host"));
         registerCallback(["hnsrem"], (msg) => this.hnsDecrement(msg), CommandType.Public, (msg) => Guard.hasRole(msg, "Minigame Host"));
 
-        this.logger.info("Registered 3 commands.", MOD);
+        this.logger.info("Registered 4 commands.", MOD);
+    }
+
+    private hnsClean(msg: Discord.Message): void {
+        var leaderboard = this.handler.getLeaderboard("hns");
+
+        if (!leaderboard) return;
+
+        var removeIds: string[] = [];
+
+        leaderboard.scores.forEach(row => {
+            var memb = ServerUtils.getDiscordMemberById(row.discordId);
+
+            if (!memb) removeIds.push(row.discordId);
+        });
+
+        this.handler.removeScores("hns", removeIds);
+
+        msg.reply("done!");
     }
 
     private hnsLeaderboard(msg: Discord.Message): void {
