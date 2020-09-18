@@ -91,6 +91,21 @@ export class LeaderboardHandler {
         this.saveLeaderboards();
     }
 
+    removeScores(type: "hns" | "quiz", discordIds: string[]): void {
+        var leaderboard = this.leaderboards.find(lead => lead.type === type);
+
+        if (!leaderboard) return;
+
+        this.leaderboards.splice(this.leaderboards.indexOf(leaderboard), 1);
+
+        discordIds.forEach(id => {
+            leaderboard.scores.splice(leaderboard.scores.findIndex(score => score.discordId === id), 1);
+        });
+
+        this.leaderboards.push(leaderboard);
+        this.saveLeaderboards();
+    }
+
     getLeaderboard(type: "hns" | "quiz"): Leaderboard {
         var leaderboard = this.leaderboards.find(lead => lead.type === type);
 
